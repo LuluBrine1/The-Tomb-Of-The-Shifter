@@ -3,6 +3,7 @@
 #include "surface.h"
 #include "game.h"
 #include <cstdio> //used for sprintf
+#include <string>
 
 
 namespace Tmpl8
@@ -296,9 +297,8 @@ namespace Tmpl8
 			int segment = 48 + (AmmoBar * i) + 2;
 			screen->Bar(segment, 410, 48 + (AmmoBar * (i+1)), 430, colour);
 		}
-		char AmmoDisplay[300];
-		sprintf(AmmoDisplay, "Ammo: % d /% d", magazine, ammo);
-		screen->Print(AmmoDisplay, 50, 435, 0xE9A240);
+		std::string AmmoDisplay = "Ammo:" + std::to_string(magazine) + "/" + std::to_string(ammo);
+		screen->Print(AmmoDisplay.c_str(), 50, 435, 0xE9A240);
 	}
 
 	void ManualReload() //if you want to reload when your magazine isnt empty, you can
@@ -488,24 +488,19 @@ namespace Tmpl8
 
 	void Firearm::DisplayStats(Surface* screen)
 	{
-		char Damage[300];
-		char Speed[300];
-		char Range[300];
-		char ReloadSpeed[300];
-		char Ammo[300];
-		char ROF[300];
-		sprintf(Damage, "Damage: % d", damage);
-		sprintf(Speed, "Bullet Speed: % d pixels/tick", speed);
-		sprintf(Range, "Range: % d pixels", range);
-		sprintf(ReloadSpeed, "Reload Speed: % d ticks", reloadrate);
-		sprintf(Ammo, "Ammo: % d", ammo);
-		sprintf(ROF, "Rate Of Fire: % d ticks", firerate);
-		screen->Print(Damage, 2, 10, 0xffffff);
-		screen->Print(Speed, 2, 20, 0xffffff);
-		screen->Print(Range, 2, 30, 0xffffff);
-		screen->Print(ReloadSpeed, 2, 40, 0xffffff);
-		screen->Print(Ammo, 2, 50, 0xffffff);
-		screen->Print(ROF, 2, 60, 0xffffff);
+		std::string Damage = "Damage:" + std::to_string(damage);
+		std::string Speed = "Speed:" + std::to_string(speed) + "pixels/tick";
+		std::string Range = "Range:" + std::to_string(range) + "pixels";
+		std::string ReloadSpeed = "Reload Speed:" + std::to_string(reloadrate) + "ticks";
+		std::string Ammo = "Ammo:" + std::to_string(ammo);
+		std::string ROF = "Rate Of Fire:" + std::to_string(firerate) + "ticks";
+
+		screen->Print(Damage.c_str(), 2, 10, 0xffffff);
+		screen->Print(Speed.c_str(), 2, 20, 0xffffff);
+		screen->Print(Range.c_str(), 2, 30, 0xffffff);
+		screen->Print(ReloadSpeed.c_str(), 2, 40, 0xffffff);
+		screen->Print(Ammo.c_str(), 2, 50, 0xffffff);
+		screen->Print(ROF.c_str(), 2, 60, 0xffffff);
 	}
 
 };

@@ -20,10 +20,23 @@ public:
 	void MouseMove( int x, int y ) { mousex = x, mousey = y; }
 	void KeyUp(int key);
 	void KeyDown(int key);
+
+
 private:
 	Surface* screen;
+	Surface* Menu;
 	int mousex, mousey;
 	int charx = 0, chary = 0;
+
+	void SetStart();
+	void TickMainMenu();
+	void TickShop();
+	void TickWin();
+	void TickLoss();
+	void TickGunUpgrade();
+	void TickElementSelect();
+	void CharacterMovement();
+	void ClearedRoom();
 };
 
 }; // namespace Tmpl8

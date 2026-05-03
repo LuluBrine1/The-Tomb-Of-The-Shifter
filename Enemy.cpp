@@ -3,6 +3,7 @@
 #include "Map.h"
 #include "game.h"
 #include <random> //used for random seeds
+#include <string>
 
 
 namespace Tmpl8
@@ -665,11 +666,13 @@ namespace Tmpl8
 				{
 					screen->Bar(100, 5, 700, 15, 0x550000);
 					screen->Bar(100, 5, 100 + EnemyHp[i], 15, 0xFF0000);
-					char ElementalImmunity[300];
-					if (ElementResistance[i] == -1) sprintf(ElementalImmunity, "Current Immunity: ");
-					if (ElementResistance[i] == 1) sprintf(ElementalImmunity, "Current Immunity: Fire");
-					if (ElementResistance[i] == 2) sprintf(ElementalImmunity, "Current Immunity: Ice");
-					if (ElementResistance[i] == 3) sprintf(ElementalImmunity, "Current Immunity: Electric");
+
+					char ElementalImmunity[]{ "Current Immunity: " };
+
+					if (ElementResistance[i] == 1) char ElementalImmunity[]{ "Current Immunity: Fire" };
+					if (ElementResistance[i] == 2) char ElementalImmunity[]{ "Current Immunity: Ice" };
+					if (ElementResistance[i] == 3) char ElementalImmunity[]{ "Current Immunity: Electric" };
+
 					screen->Print(ElementalImmunity, 340, 20, 0x888888);
 				}
 			}
@@ -681,9 +684,8 @@ namespace Tmpl8
 
 
 		screen->Bar(50, 460, 50 + (hp * 10), 480, 14483456);
-		char HPdisplay[300];
-		sprintf(HPdisplay, "Health: % d /% d", hp, maxhp);
-		screen->Print(HPdisplay, 50, 485, 0xdd0000);
+		std::string HPdisplay = "Health:" + std::to_string(hp) + "/" + std::to_string(maxhp);
+		screen->Print(HPdisplay.c_str(), 50, 485, 0xdd0000);
 
 	}
 
@@ -788,8 +790,7 @@ namespace Tmpl8
 	{
 		int Pierce = pierce;
 
-		char Resisted[60];
-		sprintf(Resisted, "Element Immune!");
+		char Resisted[]{ "Element Immune!" };
 		
 		int Element = CheckElement();
 
@@ -895,17 +896,15 @@ namespace Tmpl8
 
 		}
 		//prints enemy count, colour changes based off biome so its more readable
-		char EnemiesRemaining[300];
-		sprintf(EnemiesRemaining, "Enemies Remaining: % d", EnemySpawned);
+		std::string EnemiesRemaining = "Enemies Remaining:" + std::to_string(EnemySpawned);
 		if (Rockbiome() == false)
-			screen->Print(EnemiesRemaining, 50, 20, 0x888888);
+			screen->Print(EnemiesRemaining.c_str(), 50, 20, 0x888888);
 		else
-			screen->Print(EnemiesRemaining, 50, 20, 0xccc324);
+			screen->Print(EnemiesRemaining.c_str(), 50, 20, 0xccc324);
 
 		if (EnemySpawned == 0)
 		{
-			char ExitTheRoom[300];
-			sprintf(ExitTheRoom, "Claim your treasure and Exit the room!");
+			char ExitTheRoom[]{ "Claim your treasure and Exit the room!" };
 			if (Rockbiome() == false)
 				screen->Print(ExitTheRoom, 50, 40, 0x888888);
 			else
