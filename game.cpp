@@ -223,11 +223,10 @@ namespace Tmpl8
 				dst[x + y * ScreenWidth] = src[x + y * ScreenWidth];
 			}
 
-		char money[300];
-		sprintf(money, "Money: % d", Money);
-		screen->Print(money, 66, 320, 0xFFFFFF);
+		std::string money = "Money:" + std::to_string(Money);
+		screen->Print(money.c_str(), 66, 320, 0xFFFFFF);
 
-		if (leftmouse == true)
+		if (leftmouse)
 		{
 			if ((mousex > 41) && (mousex < 166) && (mousey > 139) && (mousey < 214)) //when the game button is clicked, start game
 			{
@@ -253,20 +252,18 @@ namespace Tmpl8
 		std::string extrahealth = "Extra Health:" + std::to_string(ExtraHealth);
 		std::string lifesteal = "Lifesteal:" + std::to_string(Lifesteal);
 		std::string maxjumps = "Jumps:" + std::to_string(MaxJumps);
-		std::string extrahealth = "Extra Health:" + std::to_string(ExtraHealth);
 		std::string money = "Money:" + std::to_string(Money);
-
-		char resettext[]{ "Hold BackSpace to clear your progress!" };
-		char backbutton[]{ "BACK" };
+		std::string resettext = "Hold BackSpace to clear your progress!";
+		std::string backbutton = "BACK";
 
 		screen->Print(extrahealth.c_str(), 50, 100, 0xFFFFFF);
 		screen->Print(lifesteal.c_str(), 50, 200, 0xFFFFFF);
 		screen->Print(maxjumps.c_str(), 50, 300, 0xFFFFFF);
 		screen->Print(money.c_str(), 600, 250, 0xFFFFFF);
 
-		screen->Print(resettext, 500, 50, 0xFFFFFF);
+		screen->Print(resettext.c_str(), 500, 50, 0xFFFFFF);
 		screen->Bar(0, 0, 50, 50, 0x888888);
-		screen->Print(backbutton, 16, 22, 0xFFFFFF);
+		screen->Print(backbutton.c_str(), 16, 22, 0xFFFFFF);
 
 		screen->Bar(575, 60, 650, 65, 0x0);
 		screen->Bar(575, 60, 575 + Reset, 65, 0xFF0000);
@@ -327,7 +324,7 @@ namespace Tmpl8
 			Reset = 0;
 		}
 
-		if (leftmouse == true)
+		if (leftmouse)
 		{
 			if ((mousex > 0) && (mousex < 50) && (mousey > 0) && (mousey < 50))
 			{
@@ -363,10 +360,10 @@ namespace Tmpl8
 	void Game::TickWin()
 	{
 		screen->Clear(0x00CC00);
-		char Wintext[]{ "YOU WIN!" };
-		screen->Print(Wintext, 384, 256, 0xFFFFFF);
+		std::string Wintext = "YOU WIN!";
+		screen->Print(Wintext.c_str(), 384, 256, 0xFFFFFF);
 
-		if (leftmouse == true)
+		if (leftmouse)
 		{
 			SetStart();
 			Sleep(50);
@@ -376,9 +373,9 @@ namespace Tmpl8
 	void Game::TickLoss()
 	{
 		screen->Clear(0x000001);
-		char Death[]{ "YOU DIED" };
-		screen->Print(Death, 384, 256, 0xFF0000);
-		if (leftmouse == true)
+		std::string Death = "YOU DIED";
+		screen->Print(Death.c_str(), 384, 256, 0xFF0000);
+		if (leftmouse)
 		{
 			SetStart();
 			Sleep(50);
@@ -387,17 +384,17 @@ namespace Tmpl8
 
 	void Game::TickGunUpgrade()
 	{
-		if (OfferedUpgrade == false)
+		if (!OfferedUpgrade)
 		{
 			screen->Clear(0xBCBB25);
 			Level.OfferUpgrade(screen);
 			weapon.DisplayStats(screen);
 			OfferedUpgrade = true;
 		}
-		if (OfferedUpgrade == true)
+		if (OfferedUpgrade)
 		{
 			int selection = -1;
-			if (leftmouse == true)
+			if (leftmouse)
 			{
 				if ((mousex > 125) && (mousex < 275) && (mousey > 106) && (mousey < 406))
 				{
@@ -538,25 +535,25 @@ namespace Tmpl8
 		if (mousex > 144 && mousex < 207 + 144 && mousey < 207)
 		{
 			ElementWheel.SetFrame(1);
-			if (leftmouse == true)
+			if (leftmouse)
 				gameState = Run, Element = 0;
 		}
 		else if (mousex > 304 + 144 && mousex < 512 + 144 && mousey < 207)
 		{
 			ElementWheel.SetFrame(2);
-			if (leftmouse == true)
+			if (leftmouse)
 				gameState = Run, Element = 1;
 		}
 		else if (mousex > 304 + 144 && mousex < 512 + 144 && mousey > 304)
 		{
 			ElementWheel.SetFrame(3);
-			if (leftmouse == true)
+			if (leftmouse)
 				gameState = Run, Element = 2;
 		}
 		else if (mousex > 144 && mousex < 207 + 144 && mousey > 304)
 		{
 			ElementWheel.SetFrame(4);
-			if (leftmouse == true)
+			if (leftmouse)
 				gameState = Run, Element = 3;
 		}
 		else
@@ -568,33 +565,33 @@ namespace Tmpl8
 	void Game::CharacterMovement()
 	{
 		//character movement and spritework
-		if (left == true)
+		if (left)
 		{
-			if (Collision(leftx - MoveSpeed, topy, charx, chary) == false && Collision(leftx - MoveSpeed, bottomy, charx, chary) == false) //prevents walking into walls
+			if (!Collision(leftx - MoveSpeed, topy, charx, chary) && !Collision(leftx - MoveSpeed, bottomy, charx, chary)) //prevents walking into walls
 			{
 				charx -= MoveSpeed;
 			}
 			moving += 0.1;
 		}
 
-		if (right == true)
+		if (right)
 		{
-			if (Collision(rightx + MoveSpeed, topy, charx, chary) == false && Collision(rightx + MoveSpeed, bottomy, charx, chary) == false) //prevents walking into walls
+			if (!Collision(rightx + MoveSpeed, topy, charx, chary) && !Collision(rightx + MoveSpeed, bottomy, charx, chary)) //prevents walking into walls
 			{
 				charx += MoveSpeed;
 			}
 			moving += 0.1;
 		}
 
-		if (space == true)
+		if (space)
 		{
-			if (Collision(leftx, bottomy + 1, charx, chary) == true || Collision(rightx, bottomy + 1, charx, chary) == true || jumps > 0) //you can only jump if youre on the floor or have more jumps
+			if (Collision(leftx, bottomy + 1, charx, chary) || Collision(rightx, bottomy + 1, charx, chary) || jumps > 0) //you can only jump if youre on the floor or have more jumps
 				gravity = 4.7, jumps -= 1, space = 0;
 		}
 
-		if (space == false)
+		if (!space)
 		{
-			if (Collision(leftx, bottomy + 1, charx, chary) == true || Collision(rightx, bottomy + 1, charx, chary) == true) //when grounded, reset jumps and gravity
+			if (Collision(leftx, bottomy + 1, charx, chary) || Collision(rightx, bottomy + 1, charx, chary)) //when grounded, reset jumps and gravity
 				if (gravity < 0) gravity = 0, jumps = MaxJumps;
 		}
 
@@ -604,12 +601,12 @@ namespace Tmpl8
 		//facing direction independent of moving direction direction so you can shoot whichever direction while moving
 		if (mousex < 400)
 		{
-			if (left == true || right == true)
+			if (left || right)
 			{
 				MainCharacter.SetFrame(4 + ((int)moving % 2));
 			}
-
-			if ((left == false && right == false) || (Collision(leftx, bottomy + 1, charx, chary) == false && Collision(rightx, bottomy + 1, charx, chary) == false))
+			
+			if ((!left && !right) || (!Collision(leftx, bottomy + 1, charx, chary) && !Collision(rightx, bottomy + 1, charx, chary)))
 			{
 				MainCharacter.SetFrame(3);
 			}
@@ -620,12 +617,12 @@ namespace Tmpl8
 
 		if (mousex > 399)
 		{
-			if (left == true || right == true)
+			if (left || right)
 			{
 				MainCharacter.SetFrame(1 + ((int)moving % 2));
 			}
 
-			if ((left == false && right == false) || (Collision(leftx, bottomy + 1, charx, chary) == false && Collision(rightx, bottomy + 1, charx, chary) == false))
+			if ((!left && !right) || (!Collision(leftx, bottomy + 1, charx, chary) && !Collision(rightx, bottomy + 1, charx, chary)))
 			{
 				MainCharacter.SetFrame(0);
 			}
@@ -635,11 +632,11 @@ namespace Tmpl8
 		}
 
 		//if you are in the floor somehow, fixes it
-		while (Collision(leftx, bottomy, charx, chary) == true || Collision(rightx, bottomy, charx, chary) == true)
+		while (Collision(leftx, bottomy, charx, chary) || Collision(rightx, bottomy, charx, chary))
 		{
 			chary++;
 		}
-		while (Collision(leftx, topy, charx, chary) == true || Collision(rightx, topy, charx, chary) == true)
+		while (Collision(leftx, topy, charx, chary) || Collision(rightx, topy, charx, chary))
 		{
 			chary--;
 			gravity = 0;
@@ -648,7 +645,7 @@ namespace Tmpl8
 
 	void Game::ClearedRoom()
 	{
-		if (Bossroom() == true) //win condition
+		if (Bossroom()) //win condition
 		{
 			Sleep(150);
 			gameState = Win;
@@ -656,15 +653,15 @@ namespace Tmpl8
 		else
 		{
 
-			if (ChestCreated == false) //chest can only be created on solid ground
+			if (!ChestCreated) //chest can only be created on solid ground
 			{
 				Level.CreateChest(centrex, centrey, charx, chary);
 				ChestCreated = Level.CreateChest(centrex, centrey, charx, chary);
 			}
 
-			if (Ekey == 1 && OfferedUpgrade == false) //you cannot open a chest youve already opened
+			if (Ekey && !OfferedUpgrade) //you cannot open a chest youve already opened
 			{
-				if (Level.ChestInteraction(centrex, centrey, charx, chary) == true)
+				if (Level.ChestInteraction(centrex, centrey, charx, chary))
 				{
 					Money += (20 + (RoomsCleared * 8));
 					RoomsCleared += 1;
@@ -750,7 +747,7 @@ namespace Tmpl8
 
 				CharacterMovement();
 
-				if (Element == 0 && PickElement == true) //if you have no element active, your move speed is doubled.
+				if (Element == 0 && PickElement) //if you have no element active, your move speed is doubled.
 				{
 					MoveSpeed = 2; //this is because i wanted there to be a reason to not have an element, and also to make it quicker to exit a room and such
 				}
@@ -761,13 +758,13 @@ namespace Tmpl8
 
 				int closestwallx = centrex; //needed for bullet collision values
 
-				while (Collision(closestwallx, 255, charx, chary) == false)
+				while (!Collision(closestwallx, 255, charx, chary))
 				{
 					if (mousex < 400) { closestwallx--; }
 					if (mousex > 399) { closestwallx++; }
 				}
 
-				if (Rkey == true)
+				if (Rkey)
 				{
 					ManualReload();
 				}
@@ -787,12 +784,12 @@ namespace Tmpl8
 				enemies = EnemyCount(screen);
 
 
-				if (CheckDeath() == true)
+				if (CheckDeath())
 				{
 					gameState = Loss;
 				}
 
-				if (Qkey == true && PickElement == true)
+				if (Qkey && PickElement)
 				{
 					gameState = ElementSelect;
 				}

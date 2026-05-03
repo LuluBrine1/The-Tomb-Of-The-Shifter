@@ -667,13 +667,13 @@ namespace Tmpl8
 					screen->Bar(100, 5, 700, 15, 0x550000);
 					screen->Bar(100, 5, 100 + EnemyHp[i], 15, 0xFF0000);
 
-					char ElementalImmunity[]{ "Current Immunity: " };
+					std::string ElementalImmunity = "Current Immunity: ";
 
-					if (ElementResistance[i] == 1) char ElementalImmunity[]{ "Current Immunity: Fire" };
-					if (ElementResistance[i] == 2) char ElementalImmunity[]{ "Current Immunity: Ice" };
-					if (ElementResistance[i] == 3) char ElementalImmunity[]{ "Current Immunity: Electric" };
+					if (ElementResistance[i] == 1) {  ElementalImmunity = "Current Immunity: Fire"; };
+					if (ElementResistance[i] == 2) {  ElementalImmunity = "Current Immunity: Ice"; };
+					if (ElementResistance[i] == 3) {  ElementalImmunity = "Current Immunity: Electric";  };
 
-					screen->Print(ElementalImmunity, 340, 20, 0x888888);
+					screen->Print(ElementalImmunity.c_str(), 340, 20, 0x888888);
 				}
 			}
 		}
@@ -790,7 +790,7 @@ namespace Tmpl8
 	{
 		int Pierce = pierce;
 
-		char Resisted[]{ "Element Immune!" };
+		std::string Resisted = "Element Immune!";
 		
 		int Element = CheckElement();
 
@@ -812,7 +812,7 @@ namespace Tmpl8
 							{
 								if (ElementResistance[e] == Element) //enemies in the rock room have elemental resistances
 								{
-									screen->Print(Resisted, EnemyX[e] + Xoffset[e] + (Width[e] / 2) - 30 - charx, EnemyY[e] + Yoffset[e] + (Height[e] / 2) + chary, 0xFFFFFF);
+									screen->Print(Resisted.c_str(), EnemyX[e] + Xoffset[e] + (Width[e] / 2) - 30 - charx, EnemyY[e] + Yoffset[e] + (Height[e] / 2) + chary, 0xFFFFFF);
 									if (Element == 3) //enemies that are immune to electric will stop the bullet completely
 									{
 										Pierce = 0;
@@ -904,11 +904,11 @@ namespace Tmpl8
 
 		if (EnemySpawned == 0)
 		{
-			char ExitTheRoom[]{ "Claim your treasure and Exit the room!" };
+			std::string ExitTheRoom = "Claim your treasure and Exit the room!";
 			if (Rockbiome() == false)
-				screen->Print(ExitTheRoom, 50, 40, 0x888888);
+				screen->Print(ExitTheRoom.c_str(), 50, 40, 0x888888);
 			else
-				screen->Print(ExitTheRoom, 50, 40, 0xccc324);
+				screen->Print(ExitTheRoom.c_str(), 50, 40, 0xccc324);
 		}
 
 		return EnemySpawned; 

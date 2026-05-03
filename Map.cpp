@@ -1858,11 +1858,11 @@ namespace Tmpl8
 				}
 			}
 
-			char text[]{ "SELECT YOUR GUN!" };
-			screen->Print(text, 354, 70, 0xffffff);
+			std::string text = "SELECT YOUR GUN!";
+			screen->Print(text.c_str(), 354, 70, 0xffffff);
 
-			char element[]{ "Press Q to select gun elements" };
-			screen->Print(element, 308, 450, 0xffffff);
+			std::string element = "Press Q to select gun elements";
+			screen->Print(element.c_str(), 308, 450, 0xffffff);
 
 			GunUpgrades.SetFrame(offering[0]);
 			GunUpgrades.Draw(screen, 125, 106);
@@ -1881,8 +1881,8 @@ namespace Tmpl8
 				}
 			}
 
-			char text[]{ "EVOLVE YOUR GUN!" };
-			screen->Print(text, 354, 70, 0xffffff);
+			std::string text = "EVOLVE YOUR GUN!";
+			screen->Print(text.c_str(), 354, 70, 0xffffff);
 
 			GunEvolutions.SetFrame(offering[0]);
 			GunEvolutions.Draw(screen, 125, 106);
@@ -1902,8 +1902,8 @@ namespace Tmpl8
 				}
 			}
 
-			char text[]{ "UPGRADE YOUR GUN!" };
-			screen->Print(text, 354, 70, 0xffffff);
+			std::string text = "UPGRADE YOUR GUN!";
+			screen->Print(text.c_str(), 354, 70, 0xffffff);
 
 			BulletUpgrades.SetFrame(offering[0]);
 			BulletUpgrades.Draw(screen, 125, 106);
