@@ -26,7 +26,7 @@ private:
 	Surface* screen;
 	Surface* Menu;
 	int mousex, mousey;
-	int charx = 0, chary = 0;
+	float charx = 0, chary = 0;
 
 	void SetStart();
 	void TickMainMenu();
@@ -35,7 +35,7 @@ private:
 	void TickLoss();
 	void TickGunUpgrade();
 	void TickElementSelect();
-	void CharacterMovement();
+	void CharacterMovement(float DeltaTime);
 	void ClearedRoom();
 };
 

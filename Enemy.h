@@ -5,19 +5,19 @@ namespace Tmpl8
 	class Surface;
 
 	void EnemyGeneration(int Space); 
-	void EnemyAction(Surface* screen, int charx, int chary);
-	void CheckDamage(Surface* screen, int charx, int chary, int Spawn);
-	bool BeingHit(Surface* screen, int bulletX, int bulletY, int charx, int chary, int damage, int pierce, int Bullet);
+	void EnemyAction(Surface* screen, float charx, float chary, float TimeMultiplier);
+	void CheckDamage(Surface* screen, float charx, float chary, int Spawn, float TimeMultiplier);
+	bool BeingHit(Surface* screen, float bulletX, float bulletY, float charx, float chary, int damage, int pierce, int Bullet, float TimeMultiplier);
 	int EnemyCount(Surface* screen);
-	void EnemyMovement(int charx, int chary, int Spawn);
+	void EnemyMovement(float charx, float chary, int Spawn, float TimeMultiplier);
 	void UpdateHitbox(int Spawn);
-	void EnemyAttack(int charx, int chary, int Spawn);
-	void BossAttack(int charx, int chary, int Spawn);
+	void EnemyAttack(float charx, float chary, int Spawn, float TimeMultiplier);
+	void BossAttack(float charx, float chary, int Spawn, float TimeMultiplier);
 
-	void ProjectileAction(Surface* screen, int charx, int chary);
-	void ProjectileMovement(int Number);
-	void CheckProjectileDamage(Surface* screen, int charx, int chary, int Number);
-	void CreateEnemy(int type, int x, int y);
+	void ProjectileAction(Surface* screen, float charx, float chary, float TimeMultiplier);
+	void ProjectileMovement(int Number, float TimeMultiplier);
+	void CheckProjectileDamage(Surface* screen, float charx, float chary, int Number, float TimeMultiplier);
+	void CreateEnemy(int type, float x, float y);
 
 	bool CheckDeath();
 
@@ -25,7 +25,7 @@ namespace Tmpl8
 	{
 	public:
 		Enemy(int type, bool RockBiome, int RoomsCleared);
-		void Draw(Surface* screen, int charx, int chary, int Spawn);
+		void Draw(Surface* screen, float charx, float chary, int Spawn);
 	private:
 
 	};
@@ -33,7 +33,7 @@ namespace Tmpl8
 	class Projectile
 	{
 	public:
-		Projectile(int type, int EnemyX, int EnemyY, int Damage, int Left);
-		void Draw(Surface* screen, int charx, int chary, int Number);
+		Projectile(int type, float EnemyX, float EnemyY, int Damage, int Left, float TimeMultiplier);
+		void Draw(Surface* screen, float charx, float chary, int Number);
 	};
 }

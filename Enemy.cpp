@@ -18,8 +18,8 @@ namespace Tmpl8
 	//enemy basic variables
 	int Enemies[124] = { 0 };
 	int EnemyHp[124] = { 0 };
-	int EnemyX[124] = { 0 };
-	int EnemyY[124] = { 0 };
+	float EnemyX[124] = { 0 };
+	float EnemyY[124] = { 0 };
 	int Width[124] = { 0 };
 	int Height[124] = { 0 };
 	int Xoffset[124] = { 0 };
@@ -27,8 +27,8 @@ namespace Tmpl8
 
 	//projectile basic variables
 	int ProjectileType[20] = { 0 };
-	int ProjectileX[20] = { 0 };
-	int ProjectileY[20] = { 0 };
+	float ProjectileX[20] = { 0 };
+	float ProjectileY[20] = { 0 };
 	int ProjectileWidth[20] = { 0 };
 	int ProjectileHeight[20] = { 0 };
 	int ProjectileXoffset[20] = { 0 };
@@ -44,25 +44,25 @@ namespace Tmpl8
 	bool Static[124] = { false };
 	int ForcedDirection[124] = { 0 };
 	int EnemySpeed[124] = { 0 };
-	int MoveTimer[124] = { 0 };
+	float MoveTimer[124] = { 0 };
 	float EnemyGravity[124] = { 0 };
 
 	//projectile moving variables
 	int ProjectileSpeed[20] = { 0 };
-	int Lifetime[20] = { 0 };
+	float Lifetime[20] = { 0 };
 	bool GravitationalProjectile[20] = { false }; //is the projectile affected by gravity
 	int Bounces[20] = { 0 }; //if a projectile has -1 bounces it gets destroyed when hitting walls, while 0 lingers on the floor
 	bool ProjectileLeft[20] = { false };
 	float ProjectileGravity[20] = { 0 };
 
 	//enemy attack variables
-	int Attacking[124] = { 0 };
+	float Attacking[124] = { 0 };
 	int EnemyDamage[124] = { 0 };
-	int AttackTimer[124] = { 0 };
+	float AttackTimer[124] = { 0 };
 	int attackchoice[124] = { 0 };
 	int ProjectileDamage[20] = { 0 };
 	int HitBulletNumber[124] = { -1 };
-	int FreezeTimer[124] = { 0 };
+	float FreezeTimer[124] = { 0 };
 	int ElementResistance[124] = { -1 };
 
 	//enemy animation variables
@@ -84,7 +84,7 @@ namespace Tmpl8
 	int Spawn = 0;
 	int Place = 0;
 	int EnemySpawned = 0;
-	int Iframes = 0;
+	float Iframes = 0;
 	int BossAttackPity = 0;
 
 	//hexcode for damage = #b61f1f
@@ -206,7 +206,7 @@ namespace Tmpl8
 				}
 				else if (EnemyType == 32)
 				{ 
-					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 31, Height[Spawn] = 16, grounded[Spawn] = true, EnemyDamage[Spawn] = 2, EnemySpeed[Spawn] = 3, MovementFrames[Spawn] = 2, EnemyLeftFrame[Spawn] = 13, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 26, ElementResistance[Spawn] = -1;
+					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 31, Height[Spawn] = 16, grounded[Spawn] = true, EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 3, MovementFrames[Spawn] = 2, EnemyLeftFrame[Spawn] = 13, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 26, ElementResistance[Spawn] = -1;
 				}
 			}
 			else if (RockBiome == true)
@@ -233,8 +233,8 @@ namespace Tmpl8
 		std::uniform_int_distribution<> MapWidth(512, 1408); 
 		std::uniform_int_distribution<> MapHeight(256, 1184); //makes sure the enemies dont spawn where the character is
 		
-		EnemyX[Spawn] = MapWidth(Map);
-		EnemyY[Spawn] = MapHeight(Map); //randomizes the spawn location for the enemy
+		EnemyX[Spawn] = (float)MapWidth(Map);
+		EnemyY[Spawn] = (float)MapHeight(Map); //randomizes the spawn location for the enemy
 		while //repeats until the enemy doesnt spawn in a wall or in the air as a grounded enemy
 			(
 			Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == true ||
@@ -248,8 +248,8 @@ namespace Tmpl8
 			Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false))
 			)
 		{
-			EnemyX[Spawn] = MapWidth(Map);
-			EnemyY[Spawn] = MapHeight(Map);
+			EnemyX[Spawn] = (float)MapWidth(Map);
+			EnemyY[Spawn] = (float)MapHeight(Map);
 		}
 
 		HasSpawned[Spawn] = true;
@@ -258,7 +258,7 @@ namespace Tmpl8
 
 	}
 
-	void CreateEnemy(int type, int x, int y) //when the enemy that isspawning isnt random, aka undead or the boss, who have a set spawn location aswell
+	void CreateEnemy(int type, float x, float y) //when the enemy that isspawning isnt random, aka undead or the boss, who have a set spawn location aswell
 	{
 		Spawn = 0;
 		while (Enemies[Spawn] != 0 && Spawn < 124)
@@ -318,7 +318,7 @@ namespace Tmpl8
 		}
 	}
 
-	Projectile::Projectile(int type, int EnemyX, int EnemyY, int Damage, int Left) //creation of projectiles, same as creating enemies, minus randomness
+	Projectile::Projectile(int type, float EnemyX, float EnemyY, int Damage, int Left, float TimeMultiplier) //creation of projectiles, same as creating enemies, minus randomness
 	{
 		Place = 0;
 		while (ProjectileType[Place] != 0)
@@ -336,32 +336,32 @@ namespace Tmpl8
 
 			if (type == 22)
 			{
-				ProjectileType[Place] = 22, ProjectileWidth[Place] = 3, ProjectileHeight[Place] = 3, ProjectileXoffset[Place] = 0, ProjectileYoffset[Place] = 0, ProjectileSpeed[Place] = 2, Lifetime[Place] = 300, GravitationalProjectile[Place] = true, Bounces[Place] = 3, ProjectileFrame[Place] = 0, ProjectileFrameCount[Place] = 2;
+				ProjectileType[Place] = 22, ProjectileWidth[Place] = 3, ProjectileHeight[Place] = 3, ProjectileXoffset[Place] = 0, ProjectileYoffset[Place] = 0, ProjectileSpeed[Place] = 2, Lifetime[Place] = 300 / TimeMultiplier, GravitationalProjectile[Place] = true, Bounces[Place] = 3, ProjectileFrame[Place] = 0, ProjectileFrameCount[Place] = 2;
 			}
 			if (type == 201)
 			{
-				ProjectileType[Place] = 201, ProjectileWidth[Place] = 7, ProjectileHeight[Place] = 3, ProjectileXoffset[Place] = 0, ProjectileYoffset[Place] = 0, ProjectileSpeed[Place] = 1, Lifetime[Place] = 100, GravitationalProjectile[Place] = false, Bounces[Place] = -1, ProjectileFrame[Place] = 0, ProjectileFrameCount[Place] = 1;
+				ProjectileType[Place] = 201, ProjectileWidth[Place] = 7, ProjectileHeight[Place] = 3, ProjectileXoffset[Place] = 0, ProjectileYoffset[Place] = 0, ProjectileSpeed[Place] = 1, Lifetime[Place] = 100 / TimeMultiplier, GravitationalProjectile[Place] = false, Bounces[Place] = -1, ProjectileFrame[Place] = 0, ProjectileFrameCount[Place] = 1;
 			}
 			if (type == 202)
 			{
-				ProjectileType[Place] = 202, ProjectileWidth[Place] = 3, ProjectileHeight[Place] = 1, ProjectileXoffset[Place] = 0, ProjectileYoffset[Place] = 0, ProjectileSpeed[Place] = 3, Lifetime[Place] = 40, GravitationalProjectile[Place] = false, Bounces[Place] = -1, ProjectileFrame[Place] = 0, ProjectileFrameCount[Place] = 1;
+				ProjectileType[Place] = 202, ProjectileWidth[Place] = 3, ProjectileHeight[Place] = 1, ProjectileXoffset[Place] = 0, ProjectileYoffset[Place] = 0, ProjectileSpeed[Place] = 3, Lifetime[Place] = 40 / TimeMultiplier, GravitationalProjectile[Place] = false, Bounces[Place] = -1, ProjectileFrame[Place] = 0, ProjectileFrameCount[Place] = 1;
 			}
 
 			if (type == 901)
 			{
-				ProjectileType[Place] = 901, ProjectileWidth[Place] = 31, ProjectileHeight[Place] = 31, ProjectileXoffset[Place] = 0, ProjectileYoffset[Place] = 0, ProjectileSpeed[Place] = 0, Lifetime[Place] = 300, GravitationalProjectile[Place] = true, Bounces[Place] = -1, ProjectileFrame[Place] = 0, ProjectileFrameCount[Place] = 1;
+				ProjectileType[Place] = 901, ProjectileWidth[Place] = 31, ProjectileHeight[Place] = 31, ProjectileXoffset[Place] = 0, ProjectileYoffset[Place] = 0, ProjectileSpeed[Place] = 0, Lifetime[Place] = 300 / TimeMultiplier, GravitationalProjectile[Place] = true, Bounces[Place] = -1, ProjectileFrame[Place] = 0, ProjectileFrameCount[Place] = 1;
 			}
 			
 			if (type == 902)
 			{
 				ProjectileType[Place] = 902, ProjectileX[Place] = EnemyX / 32, ProjectileY[Place] = 39 * 32, Lifetime[Place] = 50, GravitationalProjectile[Place] = false, Bounces[Place] = -1, ProjectileWidth[Place] = 31, ProjectileHeight[Place] = 31;
-				if (Place + 1 < 20) ProjectileType[Place + 1] = 902, ProjectileX[Place + 1] = EnemyX / 32, ProjectileY[Place + 1] = 38 * 32, Lifetime[Place + 1] = 50, GravitationalProjectile[Place + 1] = false, Bounces[Place + 1] = -1, ProjectileWidth[Place + 1] = 31, ProjectileHeight[Place + 1] = 31;
-				if (Place + 2 < 20) ProjectileType[Place + 2] = 902, ProjectileX[Place + 2] = EnemyX / 32, ProjectileY[Place + 2] = 37 * 32, Lifetime[Place + 2] = 50, GravitationalProjectile[Place + 2] = false, Bounces[Place + 2] = -1, ProjectileWidth[Place + 2] = 31, ProjectileHeight[Place + 2] = 31;
-				if (Place + 3 < 20) ProjectileType[Place + 3] = 902, ProjectileX[Place + 3] = EnemyX / 32, ProjectileY[Place + 3] = 36 * 32, Lifetime[Place + 3] = 50, GravitationalProjectile[Place + 3] = false, Bounces[Place + 3] = -1, ProjectileWidth[Place + 3] = 31, ProjectileHeight[Place + 3] = 31;
-				if (Place + 4 < 20) ProjectileType[Place + 4] = 902, ProjectileX[Place + 4] = (EnemyX / 32) - 1, ProjectileY[Place + 4] = 39 * 32, Lifetime[Place + 4] = 50, GravitationalProjectile[Place + 4] = false, Bounces[Place + 4] = -1, ProjectileWidth[Place + 4] = 31, ProjectileHeight[Place + 4] = 31;
-				if (Place + 5 < 20) ProjectileType[Place + 5] = 902, ProjectileX[Place + 5] = (EnemyX / 32) + 1, ProjectileY[Place + 5] = 39 * 32, Lifetime[Place + 5] = 50, GravitationalProjectile[Place + 5] = false, Bounces[Place + 5] = -1, ProjectileWidth[Place + 5] = 31, ProjectileHeight[Place + 5] = 31;
-				if (Place + 6 < 20) ProjectileType[Place + 6] = 902, ProjectileX[Place + 6] = (EnemyX / 32) - 1, ProjectileY[Place + 6] = 38 * 32, Lifetime[Place + 6] = 50, GravitationalProjectile[Place + 6] = false, Bounces[Place + 6] = -1, ProjectileWidth[Place + 6] = 31, ProjectileHeight[Place + 6] = 31;
-				if (Place + 7 < 20) ProjectileType[Place + 7] = 902, ProjectileX[Place + 7] = (EnemyX / 32) + 1, ProjectileY[Place + 7] = 38 * 32, Lifetime[Place + 7] = 50, GravitationalProjectile[Place + 7] = false, Bounces[Place + 7] = -1, ProjectileWidth[Place + 7] = 31, ProjectileHeight[Place + 7] = 31;
+				if (Place + 1 < 20) ProjectileType[Place + 1] = 902, ProjectileX[Place + 1] = EnemyX / 32, ProjectileY[Place + 1] = 38 * 32, Lifetime[Place + 1] = 50 / TimeMultiplier, GravitationalProjectile[Place + 1] = false, Bounces[Place + 1] = -1, ProjectileWidth[Place + 1] = 31, ProjectileHeight[Place + 1] = 31;
+				if (Place + 2 < 20) ProjectileType[Place + 2] = 902, ProjectileX[Place + 2] = EnemyX / 32, ProjectileY[Place + 2] = 37 * 32, Lifetime[Place + 2] = 50 / TimeMultiplier, GravitationalProjectile[Place + 2] = false, Bounces[Place + 2] = -1, ProjectileWidth[Place + 2] = 31, ProjectileHeight[Place + 2] = 31;
+				if (Place + 3 < 20) ProjectileType[Place + 3] = 902, ProjectileX[Place + 3] = EnemyX / 32, ProjectileY[Place + 3] = 36 * 32, Lifetime[Place + 3] = 50 / TimeMultiplier, GravitationalProjectile[Place + 3] = false, Bounces[Place + 3] = -1, ProjectileWidth[Place + 3] = 31, ProjectileHeight[Place + 3] = 31;
+				if (Place + 4 < 20) ProjectileType[Place + 4] = 902, ProjectileX[Place + 4] = (EnemyX / 32) - 1, ProjectileY[Place + 4] = 39 * 32, Lifetime[Place + 4] = 50 / TimeMultiplier, GravitationalProjectile[Place + 4] = false, Bounces[Place + 4] = -1, ProjectileWidth[Place + 4] = 31, ProjectileHeight[Place + 4] = 31;
+				if (Place + 5 < 20) ProjectileType[Place + 5] = 902, ProjectileX[Place + 5] = (EnemyX / 32) + 1, ProjectileY[Place + 5] = 39 * 32, Lifetime[Place + 5] = 50 / TimeMultiplier, GravitationalProjectile[Place + 5] = false, Bounces[Place + 5] = -1, ProjectileWidth[Place + 5] = 31, ProjectileHeight[Place + 5] = 31;
+				if (Place + 6 < 20) ProjectileType[Place + 6] = 902, ProjectileX[Place + 6] = (EnemyX / 32) - 1, ProjectileY[Place + 6] = 38 * 32, Lifetime[Place + 6] = 50 / TimeMultiplier, GravitationalProjectile[Place + 6] = false, Bounces[Place + 6] = -1, ProjectileWidth[Place + 6] = 31, ProjectileHeight[Place + 6] = 31;
+				if (Place + 7 < 20) ProjectileType[Place + 7] = 902, ProjectileX[Place + 7] = (EnemyX / 32) + 1, ProjectileY[Place + 7] = 38 * 32, Lifetime[Place + 7] = 50 / TimeMultiplier, GravitationalProjectile[Place + 7] = false, Bounces[Place + 7] = -1, ProjectileWidth[Place + 7] = 31, ProjectileHeight[Place + 7] = 31;
 
 				for (int i = 0; i < 7; i++)
 				{
@@ -383,7 +383,7 @@ namespace Tmpl8
 		}
 	}
 
-	void Enemy::Draw(Surface* screen, int charx, int chary, int Spawn)
+	void Enemy::Draw(Surface* screen, float charx, float chary, int Spawn)
 	{
 		//draws the enemies if they are alive, falling is false so that enemies that are falling disappear off the screen
 		if (HasSpawned[Spawn] == true && EnemyHp[Spawn] > 0 && (EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + chary < 512 || Falling[Spawn] == false))
@@ -404,40 +404,40 @@ namespace Tmpl8
 			if (EnemyFrame[Spawn] >= FrameCount[Spawn]) { EnemyFrame[Spawn] = FrameCount[Spawn] - 1; }
 
 			//drawing based off enemy type
-			if (Enemies[Spawn] == 11) { BrittleSkull.SetFrame(EnemyFrame[Spawn]), BrittleSkull.Draw(screen, EnemyX[Spawn] - charx, EnemyY[Spawn] + chary); }
-			else if (Enemies[Spawn] == 12) { BrittleCactus.SetFrame(EnemyFrame[Spawn]), BrittleCactus.Draw(screen, EnemyX[Spawn] - charx, EnemyY[Spawn] + chary); }
-			else if (Enemies[Spawn] == 21) { NormalWorm.SetFrame(EnemyFrame[Spawn]), NormalWorm.Draw(screen, EnemyX[Spawn] - charx, EnemyY[Spawn] + chary); }
-			else if (Enemies[Spawn] == 22) { NormalSpitter.SetFrame(EnemyFrame[Spawn]), NormalSpitter.Draw(screen, EnemyX[Spawn] - charx, EnemyY[Spawn] + chary); }
-			else if (Enemies[Spawn] == 31) { TankScorpion.SetFrame(EnemyFrame[Spawn]), TankScorpion.Draw(screen, EnemyX[Spawn] - charx, EnemyY[Spawn] + chary); }
-			else if (Enemies[Spawn] == 32) { TankArmadillo.SetFrame(EnemyFrame[Spawn]), TankArmadillo.Draw(screen, EnemyX[Spawn] - charx, EnemyY[Spawn] + chary); }
+			if (Enemies[Spawn] == 11) { BrittleSkull.SetFrame(EnemyFrame[Spawn]), BrittleSkull.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
+			else if (Enemies[Spawn] == 12) { BrittleCactus.SetFrame(EnemyFrame[Spawn]), BrittleCactus.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
+			else if (Enemies[Spawn] == 21) { NormalWorm.SetFrame(EnemyFrame[Spawn]), NormalWorm.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
+			else if (Enemies[Spawn] == 22) { NormalSpitter.SetFrame(EnemyFrame[Spawn]), NormalSpitter.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
+			else if (Enemies[Spawn] == 31) { TankScorpion.SetFrame(EnemyFrame[Spawn]), TankScorpion.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
+			else if (Enemies[Spawn] == 32) { TankArmadillo.SetFrame(EnemyFrame[Spawn]), TankArmadillo.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
 
-			else if (Enemies[Spawn] == 101) { BrittleBat.SetFrame(EnemyFrame[Spawn]), BrittleBat.Draw(screen, EnemyX[Spawn] - charx, EnemyY[Spawn] + chary); }
-			else if (Enemies[Spawn] == 102) { BrittleSpider.SetFrame(EnemyFrame[Spawn]), BrittleSpider.Draw(screen, EnemyX[Spawn] - charx, EnemyY[Spawn] + chary); }
-			else if (Enemies[Spawn] == 201) { NormalSkull.SetFrame(EnemyFrame[Spawn]), NormalSkull.Draw(screen, EnemyX[Spawn] - charx, EnemyY[Spawn] + chary); }
-			else if (Enemies[Spawn] == 202) { NormalRaider.SetFrame(EnemyFrame[Spawn]), NormalRaider.Draw(screen, EnemyX[Spawn] - charx, EnemyY[Spawn] + chary); }
-			else if (Enemies[Spawn] == 301) { TankBoulder.SetFrame(EnemyFrame[Spawn]), TankBoulder.Draw(screen, EnemyX[Spawn] - charx, EnemyY[Spawn] + chary); }
-			else if (Enemies[Spawn] == 302) { TankNecromancer.SetFrame(EnemyFrame[Spawn]), TankNecromancer.Draw(screen, EnemyX[Spawn] - charx, EnemyY[Spawn] + chary); }
+			else if (Enemies[Spawn] == 101) { BrittleBat.SetFrame(EnemyFrame[Spawn]), BrittleBat.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
+			else if (Enemies[Spawn] == 102) { BrittleSpider.SetFrame(EnemyFrame[Spawn]), BrittleSpider.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
+			else if (Enemies[Spawn] == 201) { NormalSkull.SetFrame(EnemyFrame[Spawn]), NormalSkull.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
+			else if (Enemies[Spawn] == 202) { NormalRaider.SetFrame(EnemyFrame[Spawn]), NormalRaider.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
+			else if (Enemies[Spawn] == 301) { TankBoulder.SetFrame(EnemyFrame[Spawn]), TankBoulder.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
+			else if (Enemies[Spawn] == 302) { TankNecromancer.SetFrame(EnemyFrame[Spawn]), TankNecromancer.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
 
-			else if (Enemies[Spawn] == 500) { Undead.SetFrame(EnemyFrame[Spawn]), Undead.Draw(screen, EnemyX[Spawn] - charx, EnemyY[Spawn] + chary); }
+			else if (Enemies[Spawn] == 500) { Undead.SetFrame(EnemyFrame[Spawn]), Undead.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
 
-			else if (Enemies[Spawn] == 999) { Boss.SetFrame(EnemyFrame[Spawn]), Boss.Draw(screen, EnemyX[Spawn] - charx, EnemyY[Spawn] + chary); }
+			else if (Enemies[Spawn] == 999) { Boss.SetFrame(EnemyFrame[Spawn]), Boss.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
 
 			//if enemy is frozen
 			if (FreezeTimer[Spawn] > 0)
 			{
-				Frozen.Draw(screen, EnemyX[Spawn] + Xoffset[Spawn] + (Width[Spawn]/2) - 6 - charx, EnemyY[Spawn] + Yoffset[Spawn] + (Height[Spawn]/2) - 6 + chary);
+				Frozen.Draw(screen, static_cast<int>(EnemyX[Spawn] + Xoffset[Spawn] + (Width[Spawn]/2) - 6 - charx), static_cast<int>(EnemyY[Spawn] + Yoffset[Spawn] + (Height[Spawn]/2) - 6 + chary));
 			}
 		}
 
 		
 	}
 
-	void Projectile::Draw(Surface* screen, int charx, int chary, int Number)
+	void Projectile::Draw(Surface* screen, float charx, float chary, int Number)
 	{
 		ProjectileFrame[Number] += 1;
 		ProjectileFrame[Number] = ProjectileFrame[Number] % ProjectileFrameCount[Number];
-
-		if (ProjectileType[Number] == 22) { SpitterProjectile.SetFrame(ProjectileFrame[Number]), SpitterProjectile.Draw(screen, ProjectileX[Number] - charx, ProjectileY[Number] + chary); }
+		//almost done
+		if (ProjectileType[Number] == 22) { SpitterProjectile.SetFrame(ProjectileFrame[Number]), SpitterProjectile.Draw(screen, static_cast<int>(ProjectileX[Number] - charx), static_cast<int>(ProjectileY[Number] + chary)); }
 		if (ProjectileType[Number] == 201) { SkullProjectile.SetFrame(ProjectileFrame[Number]), SkullProjectile.Draw(screen, ProjectileX[Number] - charx, ProjectileY[Number] + chary); }
 		if (ProjectileType[Number] == 202) { RaiderProjectile.SetFrame(ProjectileFrame[Number]), RaiderProjectile.Draw(screen, ProjectileX[Number] - charx, ProjectileY[Number] + chary); }
 		
@@ -460,7 +460,7 @@ namespace Tmpl8
 	}
 
 	Enemy Monster(0, false, 0);
-	Projectile Object(0, 0, 0, 0, false);
+	Projectile Object(0, 0, 0, 0, false, 0);
 
 	void EnemyGeneration(int RoomsCleared)
 	{
@@ -512,7 +512,7 @@ namespace Tmpl8
 
 			std::random_device rd;
 			std::mt19937 type(rd());
-			std::uniform_int_distribution<> wave(1, 5);
+			std::uniform_int_distribution<> wave(4, 4);
 
 			int WaveType = wave(type);
 
@@ -625,43 +625,43 @@ namespace Tmpl8
 
 	}
 
-	void EnemyAction(Surface* screen, int charx, int chary)
+	void EnemyAction(Surface* screen, float charx, float chary, float TimeMultiplier)
 	{
 
 		for (int i = 0; i < 124; i++) //loops through every enemy value
 		{
 			if (EnemyHp[i] > 0) //skips dead enemies and empty slots
 			{
-				if (AttackTimer[i] < 1)
+				if (AttackTimer[i] <= 0)
 				{
 					if (Enemies[i] == 999)
 					{
-						BossAttack(charx, chary, i);
+						BossAttack(charx, chary, i, TimeMultiplier);
 
 					}
 					else
 					{
-						EnemyAttack(charx, chary, i);
+						EnemyAttack(charx, chary, i, TimeMultiplier);
 					}
 				}
 				else
-					AttackTimer[i] -= 1;
+					AttackTimer[i] -= 1 * TimeMultiplier;
 
 
 				UpdateHitbox(i);
 
 				printf("Preparing Movement -% d\n", Enemies[i]);
-				EnemyMovement(charx, chary, i);
+				EnemyMovement(charx, chary, i, TimeMultiplier);
 				printf("Movement Done -% d\n", Enemies[i]);
 
 				if (MoveTimer[i] > 0) //if moving regularly, enemies can only move every 4th frame. this means that i can have slower enemies than 1 pixel/frame
-					MoveTimer[i] -= 1; //if direction is forced, move every frame because forced direction is part of an attack for fast enemies
+					MoveTimer[i] -= 1 * TimeMultiplier; //if direction is forced, move every frame because forced direction is part of an attack for fast enemies
 
 				Monster.Draw(screen, charx, chary, i);
 
-				if (Iframes < 1)
+				if (Iframes <= 0)
 				{
-					CheckDamage(screen, charx, chary, i);
+					CheckDamage(screen, charx, chary, i, TimeMultiplier);
 				}
 
 				if (EnemyHp[i] <= 600 && Enemies[i] == 999) //boss changes immunity very often
@@ -682,7 +682,7 @@ namespace Tmpl8
 
 		printf("enemies looped through\n");
 
-		Iframes -= 1;
+		Iframes -= 1 * TimeMultiplier;
 
 
 		screen->Bar(50, 460, 50 + (hp * 10), 480, 14483456);
@@ -691,12 +691,12 @@ namespace Tmpl8
 
 	}
 
-	void ProjectileAction(Surface* screen, int charx, int chary)
+	void ProjectileAction(Surface* screen, float charx, float chary, float TimeMultiplier)
 	{
 		for (int i = 0; i < 20; i++)
 		{
 
-			if (Lifetime[i] < 1) //projectiles that are 'dead' are removed
+			if (Lifetime[i] <= 0) //projectiles that are 'dead' are removed
 			{
 				ProjectileType[i] = { 0 };
 				ProjectileX[i] = { 0 };
@@ -717,23 +717,23 @@ namespace Tmpl8
 			}
 			else
 			{
-				ProjectileMovement(i);
+				ProjectileMovement(i, TimeMultiplier);
 				Object.Draw(screen, charx, chary, i);
-				Lifetime[i] -= 1;
+				Lifetime[i] -= 1 * TimeMultiplier;
 				if (Iframes < 1)
 				{
-					CheckProjectileDamage(screen, charx, chary, i);
+					CheckProjectileDamage(screen, charx, chary, i, TimeMultiplier);
 				}
 			}
 		}
 	}
 
-	void CheckDamage(Surface* screen, int charx, int chary, int Spawn)
+	void CheckDamage(Surface* screen, float charx, float chary, int Spawn, float TimeMultiplier)
 	{
 		bool hurt = false;
 		bool touchingplayer = false;
-		int ScreenX = EnemyX[Spawn] + Xoffset[Spawn] - charx;
-		int ScreenY = EnemyY[Spawn] + Yoffset[Spawn] + chary;
+		float ScreenX = EnemyX[Spawn] + Xoffset[Spawn] - charx;
+		float ScreenY = EnemyY[Spawn] + Yoffset[Spawn] + chary;
 		
 		for (int j = 0; j < Height[Spawn]; j++)
 		{
@@ -756,7 +756,7 @@ namespace Tmpl8
 					if (colour == -4841697 && hurt == false) //damage dealing colour. i dont know why its negative but i found this value by creating
 					{                                        //a pure (damage dealing colour) 32x32 enemy, then printing the colour value of (391, 240)
 						hp -= EnemyDamage[Spawn];            //which is the top left of my main character, which gave me this value
-						Iframes = 50;
+						Iframes = 50 * TimeMultiplier;
 						hurt = true; //makes it so that the same enemy cant deal damage multiple times as i and j increase
 							
 					}
@@ -766,11 +766,11 @@ namespace Tmpl8
 		}
 	}
 
-	void CheckProjectileDamage(Surface* screen, int charx, int chary, int Number)
+	void CheckProjectileDamage(Surface* screen, float charx, float chary, int Number, float TimeMultiplier)
 	{
 		bool hurt = false;
-		int ScreenX = ProjectileX[Number] + ProjectileXoffset[Number] - charx;
-		int ScreenY = ProjectileY[Number] + ProjectileYoffset[Number] + chary;
+		float ScreenX = ProjectileX[Number] + ProjectileXoffset[Number] - charx;
+		float ScreenY = ProjectileY[Number] + ProjectileYoffset[Number] + chary;
 
 		for (int j = 0; j < ProjectileHeight[Number]; j++)
 		{
@@ -780,7 +780,7 @@ namespace Tmpl8
 				if ((ScreenX + i < 409) && (ScreenX + i > 391) && (ScreenY + j < 272) && (ScreenY + j) > 240 && hurt == false && ProjectileDamage[Number] > 0)
 				{ 
 					hp -= ProjectileDamage[Number];
-					Iframes = 50;
+					Iframes = 50 * TimeMultiplier;
 					hurt = true;
 				}
 			}
@@ -788,7 +788,7 @@ namespace Tmpl8
 
 	}
 
-	bool BeingHit(Surface* screen, int bulletX, int bulletY, int charx, int chary, int damage, int pierce, int Bullet)
+	bool BeingHit(Surface* screen, float bulletX, float bulletY, float charx, float chary, int damage, int pierce, int Bullet, float TimeMultiplier)
 	{
 		int Pierce = pierce;
 
@@ -808,7 +808,7 @@ namespace Tmpl8
 				{
 					for (int i = 0; i < Width[e]; i++)
 					{
-						if (EnemyX[e] + Xoffset[e] + i - charx == bulletX && EnemyY[e] + Yoffset[e] + j + chary == bulletY)
+						if (static_cast<int>(EnemyX[e] + Xoffset[e] + i - charx) == static_cast<int>(bulletX) && static_cast<int>(EnemyY[e] + Yoffset[e] + j + chary) == static_cast<int>(bulletY))
 						{
 							if (HitBulletNumber[e] != Bullet) //if the bullet hasnt already hit
 							{
@@ -823,7 +823,7 @@ namespace Tmpl8
 								else
 								{
 									EnemyHp[e] -= damage;
-									if (EnemyHp[e] < 1)
+									if (EnemyHp[e] < 1 && Enemies[e] < 500)
 									{
 										hp += LifeStealAmount(); //gain health on kill
 										if (hp > maxhp)
@@ -832,7 +832,7 @@ namespace Tmpl8
 									if (Element == 2) 
 									{ 
 										Static[e] = true;
-										FreezeTimer[e] = 30;
+										FreezeTimer[e] = 30 * TimeMultiplier;
 										if (EnemySpeed[Spawn] > 1)
 											EnemySpeed[Spawn] -= 1;
 									}
@@ -919,7 +919,7 @@ namespace Tmpl8
 		return EnemySpawned; 
 	}
 
-	void EnemyMovement(int charx, int chary, int Spawn)
+	void EnemyMovement(float charx, float chary, int Spawn, float TimeMultiplier)
 	{
 		if (Enemies[Spawn] > 0)
 		{
@@ -940,7 +940,7 @@ namespace Tmpl8
 					Below = true;
 			}
 
-			if (OnScreen == true && Static[Spawn] == false && ForcedDirection[Spawn] == 0 && MoveTimer[Spawn] < 1) //if the enemy is free to move
+			if (OnScreen == true && Static[Spawn] == false && ForcedDirection[Spawn] == 0 && MoveTimer[Spawn] <= 0) //if the enemy is free to move
 			{
 				if (Below == true && grounded[Spawn] == true && Falling[Spawn] == false)
 				{
@@ -965,7 +965,7 @@ namespace Tmpl8
 					}
 
 					if (Climbing[Spawn] == true)
-						EnemyY[Spawn] -= EnemySpeed[Spawn];
+						EnemyY[Spawn] -= (EnemySpeed[Spawn] * TimeMultiplier);
 				}
 
 				if (Above == true && grounded[Spawn] == true)
@@ -978,7 +978,7 @@ namespace Tmpl8
 				{
 					if (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + EnemySpeed[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + EnemySpeed[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == false)
 					{
-						EnemyX[Spawn] += EnemySpeed[Spawn];
+						EnemyX[Spawn] += EnemySpeed[Spawn] * TimeMultiplier;
 						EnemyMoveFrame[Spawn] += 1;
 						EnemyLeft[Spawn] = EnemyLeftFrame[Spawn];
 						moving[Spawn] = true;
@@ -992,7 +992,7 @@ namespace Tmpl8
 				{
 					if (Collision(EnemyX[Spawn] + Xoffset[Spawn] - EnemySpeed[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] - EnemySpeed[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == false)
 					{
-						EnemyX[Spawn] -= EnemySpeed[Spawn];
+						EnemyX[Spawn] -= EnemySpeed[Spawn] * TimeMultiplier;
 						EnemyMoveFrame[Spawn] += 1;
 						EnemyLeft[Spawn] = 0;
 						moving[Spawn] = true;
@@ -1011,10 +1011,10 @@ namespace Tmpl8
 				//and hence the coordinate fix to the center of the map if they attempt to escape
 				if (Above == true && grounded[Spawn] == false)
 				{
-					EnemyY[Spawn] += EnemySpeed[Spawn];
+					EnemyY[Spawn] += EnemySpeed[Spawn] * TimeMultiplier;
 					while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true)
 					{
-						EnemyY[Spawn] -= 1;
+						EnemyY[Spawn] -= 1 * TimeMultiplier;
 						if (EnemyY[Spawn] / 32 < 6)
 						{
 							EnemyY[Spawn] = 23 * 32;
@@ -1024,10 +1024,10 @@ namespace Tmpl8
 				}
 				if (Below == true && grounded[Spawn] == false)
 				{
-					EnemyY[Spawn] -= EnemySpeed[Spawn];
+					EnemyY[Spawn] -= EnemySpeed[Spawn] * TimeMultiplier;
 					while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == true)
 					{
-						EnemyY[Spawn] += 1;
+						EnemyY[Spawn] += 1 * TimeMultiplier;
 						if (EnemyY[Spawn] / 32 > 42)
 						{
 							EnemyY[Spawn] = 23 * 32;
@@ -1039,7 +1039,7 @@ namespace Tmpl8
 
 
 
-				MoveTimer[Spawn] = 4; 
+				MoveTimer[Spawn] = 4 * TimeMultiplier;
 			}
 
 			if (OnScreen == true && grounded[Spawn] == true && Climbing[Spawn] == true)
@@ -1054,11 +1054,11 @@ namespace Tmpl8
 				if (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false)
 				{
 					Falling[Spawn] = true;
-					EnemyY[Spawn] -= (int)EnemyGravity[Spawn];
-					EnemyGravity[Spawn] -= 0.1;
+					EnemyY[Spawn] -= EnemyGravity[Spawn] * TimeMultiplier;
+					EnemyGravity[Spawn] -= 0.1 * TimeMultiplier;
 					while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1 - (int)EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1 - (int)EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1 - (int)EnemyGravity[Spawn], 0, 0) == true)
 					{
-						EnemyGravity[Spawn] += 0.1;
+						EnemyGravity[Spawn] += 0.1 * TimeMultiplier;
 					}
 				}
 				else
@@ -1074,7 +1074,7 @@ namespace Tmpl8
 			{
 				while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] - 1 - (int)EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + Yoffset[Spawn] - 1 - (int)EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] - 1 - (int)EnemyGravity[Spawn], 0, 0) == true)
 				{
-					EnemyGravity[Spawn] -= 0.1;
+					EnemyGravity[Spawn] -= 0.1 * TimeMultiplier;
 				}
 			}
 
@@ -1084,7 +1084,7 @@ namespace Tmpl8
 			{
 				if (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + EnemySpeed[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + EnemySpeed[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == false)
 				{
-					EnemyX[Spawn] += EnemySpeed[Spawn];
+					EnemyX[Spawn] += EnemySpeed[Spawn] * TimeMultiplier;
 				}
 				else if (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + 1, EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == false)
 					EnemyX[Spawn] += 1;
@@ -1093,7 +1093,7 @@ namespace Tmpl8
 			{
 				if (Collision(EnemyX[Spawn] + Xoffset[Spawn] - EnemySpeed[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] - EnemySpeed[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == false)
 				{
-					EnemyX[Spawn] -= EnemySpeed[Spawn];
+					EnemyX[Spawn] -= EnemySpeed[Spawn] * TimeMultiplier;
 				}
 				else if (Collision(EnemyX[Spawn] + Xoffset[Spawn] - 1, EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] - 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == false)
 					EnemyX[Spawn] -= 1;
@@ -1102,19 +1102,19 @@ namespace Tmpl8
 			{
 				if (Ylocation < 266 && grounded[Spawn] == false)
 				{
-					EnemyY[Spawn] += EnemySpeed[Spawn];
+					EnemyY[Spawn] += EnemySpeed[Spawn] * TimeMultiplier;
 					while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true)
 						EnemyY[Spawn] -= 1;
 				}
 				if (Ylocation > 260 && grounded[Spawn] == false)
 				{
-					EnemyY[Spawn] -= EnemySpeed[Spawn];
+					EnemyY[Spawn] -= EnemySpeed[Spawn] * TimeMultiplier;
 					while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == true)
 						EnemyY[Spawn] += 1;
 				}
 				if (Ylocation > 260 && grounded[Spawn] == true && Enemies[Spawn] != 21) //used for the spider, because forced directions are every frame, the spider climbs incredibly fast
 				{
-					EnemyY[Spawn] -= EnemySpeed[Spawn];
+					EnemyY[Spawn] -= EnemySpeed[Spawn] * TimeMultiplier;
 					while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == true)
 						EnemyY[Spawn] += 1;
 				}
@@ -1147,12 +1147,12 @@ namespace Tmpl8
 					if (Air == true)
 					{
 						Burrowing[Spawn] = true;
-						EnemyY[Spawn] += 1;
+						EnemyY[Spawn] += 1 * TimeMultiplier;
 
 					}
 
 					//checks for whether the full body could unburrow
-					for (int i = 0; i < 32; i++)
+					for (int i = 0; i < 16; i++)
 					{
 						for (int j = 0; j < 64; j++)
 						{
@@ -1175,8 +1175,8 @@ namespace Tmpl8
 			if (FreezeTimer[Spawn] > 0) //enemies hit by the ice element are slowed and temporarily frozen
 			{
 				Static[Spawn] = true;
-				FreezeTimer[Spawn] -= 1;
-				if (FreezeTimer[Spawn] < 1)
+				FreezeTimer[Spawn] -= 1 * TimeMultiplier;
+				if (FreezeTimer[Spawn] <= 0)
 				{
 					Static[Spawn] = false;
 					if (EnemySpeed[Spawn] > 1)
@@ -1201,12 +1201,12 @@ namespace Tmpl8
 	
 	}
 
-	void ProjectileMovement(int Number)
+	void ProjectileMovement(int Number, float TimeMultiplier)
 	{
 		//projectile direction
 		if (ProjectileLeft[Number] == false) 
 		{ 
-			ProjectileX[Number] -= ProjectileSpeed[Number]; 
+			ProjectileX[Number] -= ProjectileSpeed[Number] * TimeMultiplier;
 			if (Collision(ProjectileX[Number] + ProjectileXoffset[Number] - ProjectileSpeed[Number], ProjectileY[Number] + ProjectileYoffset[Number], 0, 0) == true || Collision(ProjectileX[Number] + ProjectileXoffset[Number] - ProjectileSpeed[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number], 0, 0) == true)
 			{
 				if (Bounces[Number] > 0)
@@ -1219,7 +1219,7 @@ namespace Tmpl8
 		}
 		if (ProjectileLeft[Number] == true) 
 		{ 
-			ProjectileX[Number] += ProjectileSpeed[Number]; 
+			ProjectileX[Number] += ProjectileSpeed[Number] * TimeMultiplier;
 			if (Collision(ProjectileX[Number] + ProjectileXoffset[Number] + ProjectileWidth[Number] + ProjectileSpeed[Number], ProjectileY[Number] + ProjectileYoffset[Number], 0, 0) == true || Collision(ProjectileX[Number] + ProjectileXoffset[Number] + ProjectileWidth[Number] + ProjectileSpeed[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number], 0, 0) == true)
 			{ 
 				if (Bounces[Number] != -1)
@@ -1235,8 +1235,8 @@ namespace Tmpl8
 		//gravity
 		if (GravitationalProjectile[Number] == true)
 		{
-			ProjectileY[Number] -= (int)ProjectileGravity[Number];
-			ProjectileGravity[Number] -= 0.05;
+			ProjectileY[Number] -= ProjectileGravity[Number] * TimeMultiplier;
+			ProjectileGravity[Number] -= 0.05 * TimeMultiplier;
 
 			if (Collision(ProjectileX[Number] + ProjectileXoffset[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number] + 1, 0, 0) == true || Collision(ProjectileX[Number] + ProjectileXoffset[Number] + ProjectileWidth[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number] + 1, 0, 0) == true)
 			{
@@ -1257,7 +1257,7 @@ namespace Tmpl8
 		}
 		if (ProjectileType[Number] == 902)
 		{
-			if (Lifetime[Number] <= 10)
+			if (Lifetime[Number] <= 10 * TimeMultiplier)
 			{
 				ProjectileFrame[Number] = 0;
 				ProjectileDamage[Number] = (int)(maxhp * 0.2);
@@ -1537,7 +1537,7 @@ namespace Tmpl8
 		}
 	}
 
-	void EnemyAttack(int charx, int chary, int Spawn)
+	void EnemyAttack(float charx, float chary, int Spawn, float TimeMultiplier)
 	{
 		int Xlocation = EnemyX[Spawn] + (Xoffset[Spawn] + Width[Spawn]) / 2 - charx;
 		int Ylocation = EnemyY[Spawn] + (Yoffset[Spawn] + Height[Spawn]) / 2 + chary;
@@ -1549,14 +1549,14 @@ namespace Tmpl8
 		{
 			if (Enemies[Spawn] == 11) //the brittle skull will reel back, align Y value, and dash forward
 			{
-				if (Attacking[Spawn] < 1 && Xlocation < 500 && Xlocation > 300 && Ylocation < 290 && Ylocation > 230)
+				if (Attacking[Spawn] <= 0 && Xlocation < 500 && Xlocation > 300 && Ylocation < 290 && Ylocation > 230)
 				{
-					Attacking[Spawn] = 175;
+					Attacking[Spawn] = 175 * TimeMultiplier;
 					MoveFrame[Spawn] = false;
 				}
 				else if (Attacking[Spawn] > 0)
 				{
-					if (Attacking[Spawn] > 125)
+					if (Attacking[Spawn] > 125 * TimeMultiplier)
 					{
 						if (EnemyLeft[Spawn] == 0)
 						{
@@ -1571,12 +1571,12 @@ namespace Tmpl8
 							EnemyAttackFrame[Spawn] = 3;
 						}
 					}
-					if (Attacking[Spawn] < 126 && Attacking[Spawn] > 74)
+					if (Attacking[Spawn] <= 125 * TimeMultiplier && Attacking[Spawn] > 75 * TimeMultiplier)
 					{
 						ForcedDirection[Spawn] = 5;
 						EnemySpeed[Spawn] = 1;
 					}
-					if (Attacking[Spawn] < 75)
+					if (Attacking[Spawn] <= 75 * TimeMultiplier)
 					{
 						if (EnemyLeft[Spawn] == 0)
 						{
@@ -1592,8 +1592,8 @@ namespace Tmpl8
 
 
 
-					Attacking[Spawn] -= 1;
-					if (Attacking[Spawn] == 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 750, EnemySpeed[Spawn] = 2, MoveFrame[Spawn] = true; }
+					Attacking[Spawn] -= 1 * TimeMultiplier;
+					if (Attacking[Spawn] <= 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 750 * TimeMultiplier, EnemySpeed[Spawn] = 2, MoveFrame[Spawn] = true; }
 				}
 			}
 
@@ -1603,28 +1603,28 @@ namespace Tmpl8
 
 			if (Enemies[Spawn] == 12) //the brittle cactus enemy will speed up, prepare, and jump at you
 			{
-				if (Attacking[Spawn] < 1 && Xlocation < 600 && Xlocation > 200 && Ylocation < 320 && Ylocation > 200)
+				if (Attacking[Spawn] <= 0 && Xlocation < 600 && Xlocation > 200 && Ylocation < 370 && Ylocation > 200)
 				{
-					Attacking[Spawn] = 175;
+					Attacking[Spawn] = 175 * TimeMultiplier;
 					EnemySpeed[Spawn] = 3;
 					EnemyAttackFrame[Spawn] = 1;
 				}
 				else if (Attacking[Spawn] > 0)
 				{
 					
-					if (Xlocation < 475 && Xlocation > 325 && Ylocation < 350 && Ylocation > 230 && Attacking[Spawn] > 40)
+					if (Xlocation < 475 && Xlocation > 325 && Ylocation < 350 && Ylocation > 230 && Attacking[Spawn] > 40 * TimeMultiplier)
 					{
 						Static[Spawn] = true;
 						EnemyAttackFrame[Spawn] = 2;
 						Attacking[Spawn] = 40;
 					}
-					if (Attacking[Spawn] < 21 && Attacking[Spawn] > 3)
+					if (Attacking[Spawn] < 21 * TimeMultiplier && Attacking[Spawn] > 3 * TimeMultiplier)
 					{
 						Static[Spawn] = true;
 						EnemyAttackFrame[Spawn] = 2;
 						EnemySpeed[Spawn] = 1;
 					}
-					if (Attacking[Spawn] == 3)
+					if (Attacking[Spawn] <= 3 * TimeMultiplier && Attacking[Spawn] >= 2 * TimeMultiplier)
 					{
 						Static[Spawn] = false;
 						MoveFrame[Spawn] = false;
@@ -1645,28 +1645,28 @@ namespace Tmpl8
 						if (Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false)
 						{
 							Falling[Spawn] = true;
-							Attacking[Spawn] = 2;
+							Attacking[Spawn] = 2 * TimeMultiplier;
 						}
 					}
-					if (Attacking[Spawn] == 1)
+					if (Attacking[Spawn] <= 1 * TimeMultiplier)
 					{
 						if (Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false)
 						{
 							Falling[Spawn] = true;
-							Attacking[Spawn] = 2;
+							Attacking[Spawn] = 2 * TimeMultiplier;
 						}
 					}
 					
 
 
-					Attacking[Spawn] -= 1;
-					if (Attacking[Spawn] == 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 600, EnemySpeed[Spawn] = 2, Falling[Spawn] = false, MoveFrame[Spawn] = true; }
+					Attacking[Spawn] -= 1 * TimeMultiplier;
+					if (Attacking[Spawn] <= 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 600 * TimeMultiplier, EnemySpeed[Spawn] = 2, Falling[Spawn] = false, MoveFrame[Spawn] = true; }
 				}
 			}
 
 			if (Enemies[Spawn] == 21) //the normal worm will burrow and, when nearby, attack the enemy
 			{
-				if (Ylocation < 208 && Attacking[Spawn] < 1)
+				if (Ylocation < 208 && Attacking[Spawn] <= 0)
 				{
 					if (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + 13 + 18, 0, 0) == true)
 						ForcedDirection[Spawn] = 5, MoveFrame[Spawn] = false, EnemyAttackFrame[Spawn] = 10;
@@ -1674,44 +1674,54 @@ namespace Tmpl8
 
 				if (ForcedDirection[Spawn] == 0)
 				{
-					if (Attacking[Spawn] < 1 && Xlocation < 450 && Xlocation > 350 && Ylocation < 320 && Ylocation > 208)
+					if (Attacking[Spawn] <= 0 && Xlocation < 450 && Xlocation > 350 && Ylocation < 320 && Ylocation > 208)
 					{
 						MoveFrame[Spawn] = false;
-						Attacking[Spawn] = 25;
+						Attacking[Spawn] = 25 * TimeMultiplier;
 					}
-					if (Attacking[Spawn] < 25 && Attacking[Spawn] > 10)
+					if (Attacking[Spawn] < 25 * TimeMultiplier && Attacking[Spawn] > 10 * TimeMultiplier)
 					{
 						EnemyAttackFrame[Spawn] = (Attacking[Spawn] - 10) / 3;
 					}
-					if (Attacking[Spawn] < 11 && Attacking[Spawn] > 0)
+					if (Attacking[Spawn] <= 10 * TimeMultiplier && Attacking[Spawn] > 0)
 					{
 						EnemyAttackFrame[Spawn] = 9;
 					}
 
-					Attacking[Spawn] -= 1;
-					if (Attacking[Spawn] == 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 600, EnemySpeed[Spawn] = 2, Falling[Spawn] = false, MoveFrame[Spawn] = true; }
+					Attacking[Spawn] -= 1 * TimeMultiplier;
+					if (Attacking[Spawn] <= 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 600 * TimeMultiplier, EnemySpeed[Spawn] = 2, Falling[Spawn] = false, MoveFrame[Spawn] = true; }
 				}
 			}
 
 			if (Enemies[Spawn] == 22) //the normal spitter will spit at you
 			{
-				if (Attacking[Spawn] < 1 && Xlocation < 500 && Xlocation > 300 && Ylocation < 320 && Ylocation > 200)
+				if (Attacking[Spawn] <= 0 && Xlocation < 500 && Xlocation > 300 && Ylocation < 320 && Ylocation > 200)
 				{
-					Attacking[Spawn] = 100;
+					Attacking[Spawn] = 100 * TimeMultiplier;
 				}
-				if (Attacking[Spawn] < 15 && Attacking[Spawn] > 0)
+				if (Attacking[Spawn] < 15 * TimeMultiplier && Attacking[Spawn] > 0)
 				{
 					moving[Spawn] = false;
-					EnemyAttackFrame[Spawn] = 8 - (Attacking[Spawn] / 3);
+					if (Attacking[Spawn] > 12 * TimeMultiplier)
+						EnemyAttackFrame[Spawn] = 4;
+					else if (Attacking[Spawn] > 9 * TimeMultiplier)
+						EnemyAttackFrame[Spawn] = 5;
+					else if (Attacking[Spawn] > 6 * TimeMultiplier)
+						EnemyAttackFrame[Spawn] = 6;
+					else if (Attacking[Spawn] > 3 * TimeMultiplier)
+						EnemyAttackFrame[Spawn] = 7;
+					else if (Attacking[Spawn] > 0 * TimeMultiplier)
+						EnemyAttackFrame[Spawn] = 8;
+					
 				}
-				if (Attacking[Spawn] == 1)
+				if (Attacking[Spawn] <= 1 * TimeMultiplier)
 				{
-					if (EnemyLeft[Spawn] == 0) Projectile Object(22, EnemyX[Spawn] + 4, EnemyY[Spawn] + 6, EnemyDamage[Spawn], EnemyLeft[Spawn]);
-					if (EnemyLeft[Spawn] != 0) Projectile Object(22, EnemyX[Spawn] + 23, EnemyY[Spawn] + 6, EnemyDamage[Spawn], EnemyLeft[Spawn]);
+					if (EnemyLeft[Spawn] == 0) Projectile Object(22, EnemyX[Spawn] + 4, EnemyY[Spawn] + 6, EnemyDamage[Spawn], EnemyLeft[Spawn], TimeMultiplier);
+					if (EnemyLeft[Spawn] != 0) Projectile Object(22, EnemyX[Spawn] + 23, EnemyY[Spawn] + 6, EnemyDamage[Spawn], EnemyLeft[Spawn], TimeMultiplier);
 				}
 
-				Attacking[Spawn] -= 1;
-				if (Attacking[Spawn] == 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 600, EnemySpeed[Spawn] = 2, Falling[Spawn] = false, MoveFrame[Spawn] = true; }
+				Attacking[Spawn] -= 1 * TimeMultiplier;
+				if (Attacking[Spawn] <= 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 600 * TimeMultiplier, EnemySpeed[Spawn] = 2, Falling[Spawn] = false, MoveFrame[Spawn] = true; }
 			}
 
 
@@ -1722,63 +1732,95 @@ namespace Tmpl8
 				std::mt19937 attack(rd());
 				std::uniform_int_distribution<> pick(1, 2);
 
-				if (Attacking[Spawn] < 1 && Xlocation < 500 && Xlocation > 300 && Ylocation < 320 && Ylocation > 200)
+				if (Attacking[Spawn] <= 0 && Xlocation < 500 && Xlocation > 300 && Ylocation < 320 && Ylocation > 200)
 				{
 					attackchoice[Spawn] = pick(attack);
 					if (attackchoice[Spawn] == 1)
-						Attacking[Spawn] = 200;
+						Attacking[Spawn] = 200 * TimeMultiplier;
 					if (attackchoice[Spawn] == 2)
-						Attacking[Spawn] = 300;
+						Attacking[Spawn] = 300 * TimeMultiplier;
 					
 				}
 				if (Attacking[Spawn] > 0 && attackchoice != 0)
 				{
 					if (attackchoice[Spawn] == 1)
 					{
-						if (Attacking[Spawn] > 35)
+						if (Attacking[Spawn] > 35 * TimeMultiplier)
 						{
 							EnemySpeed[Spawn] = 2;
 						}
-						if (Attacking[Spawn] < 36)
+						if (Attacking[Spawn] <= 35 * TimeMultiplier)
 						{
 							MoveFrame[Spawn] = false;
 							EnemySpeed[Spawn] = 1;
 							Static[Spawn] = true;
-							EnemyAttackFrame[Spawn] = 10-(Attacking[Spawn]/4);
+							EnemyAttackFrame[Spawn] = 10-(static_cast<int>(Attacking[Spawn])/4);
+
+							if (Attacking[Spawn] > 31 * TimeMultiplier)
+								EnemyAttackFrame[Spawn] = 2;
+							else if (Attacking[Spawn] > 27 * TimeMultiplier)
+								EnemyAttackFrame[Spawn] = 3;
+							else if (Attacking[Spawn] > 23 * TimeMultiplier)
+								EnemyAttackFrame[Spawn] = 4;
+							else if (Attacking[Spawn] > 19 * TimeMultiplier)
+								EnemyAttackFrame[Spawn] = 5;
+							else if (Attacking[Spawn] > 15 * TimeMultiplier)
+								EnemyAttackFrame[Spawn] = 6;
+							else if (Attacking[Spawn] > 11 * TimeMultiplier)
+								EnemyAttackFrame[Spawn] = 7;
+							else if (Attacking[Spawn] > 7 * TimeMultiplier)
+								EnemyAttackFrame[Spawn] = 8;
+							else if (Attacking[Spawn] > 3 * TimeMultiplier)
+								EnemyAttackFrame[Spawn] = 9;
+							else if (Attacking[Spawn] > 0 * TimeMultiplier)
+								EnemyAttackFrame[Spawn] = 10;
 						}
 
 					}
 					if (attackchoice[Spawn] == 2)
 					{
-						if (Attacking[Spawn] > 149)
+						if (Attacking[Spawn] > 150 * TimeMultiplier)
 						{
 							EnemySpeed[Spawn] = 3;
 						}
-						if (Attacking[Spawn] < 150 && Attacking[Spawn] > 90)
+						if (Attacking[Spawn] <= 150 * TimeMultiplier && Attacking[Spawn] > 90 * TimeMultiplier)
 						{
 							MoveFrame[Spawn] = false;
 							EnemySpeed[Spawn] = 2;
-							EnemyAttackFrame[Spawn] = 15 - ((Attacking[Spawn] - 90) / 10);
+
+							if (Attacking[Spawn] > 140 * TimeMultiplier)
+								EnemyAttackFrame[Spawn] = 10;
+							else if (Attacking[Spawn] > 130 * TimeMultiplier)
+								EnemyAttackFrame[Spawn] = 11;
+							else if (Attacking[Spawn] > 120 * TimeMultiplier)
+								EnemyAttackFrame[Spawn] = 12;
+							else if (Attacking[Spawn] > 110 * TimeMultiplier)
+								EnemyAttackFrame[Spawn] = 13;
+							else if (Attacking[Spawn] > 100 * TimeMultiplier)
+								EnemyAttackFrame[Spawn] = 14;
+							else if (Attacking[Spawn] > 90 * TimeMultiplier)
+								EnemyAttackFrame[Spawn] = 15;
+
 						}
-						if (Attacking[Spawn] < 91 && Attacking[Spawn] > 30)
+						if (Attacking[Spawn] <= 90 * TimeMultiplier && Attacking[Spawn] > 30 * TimeMultiplier)
 						{
 							EnemySpeed[Spawn] = 1;
 						}
-						if (Attacking[Spawn] < 31)
+						if (Attacking[Spawn] <= 30 * TimeMultiplier)
 						{
 							Static[Spawn] = true;
 						}
-						if (Attacking[Spawn] < 16)
+						if (Attacking[Spawn] < 16 * TimeMultiplier)
 						{
 							Static[Spawn] = true;
-							EnemyAttackFrame[Spawn] = 19 - (Attacking[Spawn] / 4);
+							EnemyAttackFrame[Spawn] = 19 - (static_cast<int>(Attacking[Spawn]) / 4);
 						}
 					}
 
 
 
-					Attacking[Spawn] -= 1;
-					if (Attacking[Spawn] == 0) { MoveFrame[Spawn] = true, EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 400, EnemySpeed[Spawn] = 1, Static[Spawn] = false; }
+					Attacking[Spawn] -= 1 * TimeMultiplier;
+					if (Attacking[Spawn] <= 0) { MoveFrame[Spawn] = true, EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 400 * TimeMultiplier, EnemySpeed[Spawn] = 1, Static[Spawn] = false; }
 				}
 			}
 
@@ -1801,13 +1843,13 @@ namespace Tmpl8
 					{
 						ForcedDirection[Spawn] = -1;
 						EnemySpeed[Spawn] = 3;
-						EnemyAttackFrame[Spawn] = 22 + (Attacking[Spawn] % 4);
+						EnemyAttackFrame[Spawn] = 22 + (static_cast<int>(Attacking[Spawn]) % 4);
 					}
 					if (EnemyLeft[Spawn] != 0)
 					{
 						ForcedDirection[Spawn] = 1;
 						EnemySpeed[Spawn] = 3;
-						EnemyAttackFrame[Spawn] = 9 + (Attacking[Spawn] % 4);
+						EnemyAttackFrame[Spawn] = 9 + (static_cast<int>(Attacking[Spawn]) % 4);
 					}
 				}
 				if (Attacking[Spawn] == 150 || Attacking[Spawn] == 100 || Attacking[Spawn] == 50)
@@ -1817,7 +1859,7 @@ namespace Tmpl8
 			
 
 				Attacking[Spawn] -= 1;
-				if (Attacking[Spawn] == 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 800, EnemySpeed[Spawn] = 3, Falling[Spawn] = false, MoveFrame[Spawn] = true; }
+				if (Attacking[Spawn] == 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 800 * TimeMultiplier, EnemySpeed[Spawn] = 3, Falling[Spawn] = false, MoveFrame[Spawn] = true; }
 			}
 
 			//the brittle bat does not haave an attack
@@ -1846,11 +1888,11 @@ namespace Tmpl8
 
 			if (Enemies[Spawn] == 201) //the normal skull will reel back, and shoot a laser at you
 			{
-				if (Attacking[Spawn] < 1 && Xlocation < 500 && Xlocation > 300 && Ylocation < 320 && Ylocation > 200)
+				if (Attacking[Spawn] <= 0 && Xlocation < 500 && Xlocation > 300 && Ylocation < 320 && Ylocation > 200)
 				{
-					Attacking[Spawn] = 300;
+					Attacking[Spawn] = 300 * TimeMultiplier;
 				}
-				if (Attacking[Spawn] < 300 && Attacking[Spawn] > 99)
+				if (Attacking[Spawn] < 300 * TimeMultiplier && Attacking[Spawn] > 100 * TimeMultiplier)
 				{
 					if (Xlocation > 350 && Xlocation < 400)
 						ForcedDirection[Spawn] = -1;
@@ -1859,35 +1901,35 @@ namespace Tmpl8
 					else
 						ForcedDirection[Spawn] = 0;
 				}
-				if (Attacking[Spawn] < 100 && Attacking[Spawn] > 0)
+				if (Attacking[Spawn] <= 100 * TimeMultiplier && Attacking[Spawn] > 0)
 				{
 					ForcedDirection[Spawn] = 5;
-					EnemyAttackFrame[Spawn] = 4 - Attacking[Spawn] / 25;
+					EnemyAttackFrame[Spawn] = 4 - static_cast<int>(Attacking[Spawn]) / 25;
 				}
-				if (Attacking[Spawn] == 1)
+				if (Attacking[Spawn] <= 1 * TimeMultiplier)
 				{
-					if (EnemyLeft[Spawn] == 0) Projectile Object(201, EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + 26, EnemyDamage[Spawn], EnemyLeft[Spawn]);
-					if (EnemyLeft[Spawn] != 0) Projectile Object(201, EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] - 3, EnemyY[Spawn] + 26, EnemyDamage[Spawn], EnemyLeft[Spawn]);
+					if (EnemyLeft[Spawn] == 0) Projectile Object(201, EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + 26, EnemyDamage[Spawn], EnemyLeft[Spawn], TimeMultiplier);
+					if (EnemyLeft[Spawn] != 0) Projectile Object(201, EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] - 3, EnemyY[Spawn] + 26, EnemyDamage[Spawn], EnemyLeft[Spawn], TimeMultiplier);
 				}
 
-				Attacking[Spawn] -= 1;
-				if (Attacking[Spawn] == 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 600, EnemySpeed[Spawn] = 1, Falling[Spawn] = false, MoveFrame[Spawn] = true; }
+				Attacking[Spawn] -= 1 * TimeMultiplier;
+				if (Attacking[Spawn] <= 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 600 * TimeMultiplier, EnemySpeed[Spawn] = 1, Falling[Spawn] = false, MoveFrame[Spawn] = true; }
 			}
 
 			if (Enemies[Spawn] == 202) //the normal raider will always shoot bullets
 			{
-				if (Attacking[Spawn] < 1)
+				if (Attacking[Spawn] <= 0)
 				{
-					Attacking[Spawn] = 75;
+					Attacking[Spawn] = 75 * TimeMultiplier;
 				}
-				if (Attacking[Spawn] == 1)
+				if (Attacking[Spawn] <= 1 * TimeMultiplier)
 				{
-					if (EnemyLeft[Spawn] == 0) Projectile Object(202, EnemyX[Spawn] + 1, EnemyY[Spawn] + 15, EnemyDamage[Spawn], EnemyLeft[Spawn]);
-					if (EnemyLeft[Spawn] != 0) Projectile Object(202, EnemyX[Spawn] + 29, EnemyY[Spawn] + 15, EnemyDamage[Spawn], EnemyLeft[Spawn]);
+					if (EnemyLeft[Spawn] == 0) Projectile Object(202, EnemyX[Spawn] + 1, EnemyY[Spawn] + 15, EnemyDamage[Spawn], EnemyLeft[Spawn], TimeMultiplier);
+					if (EnemyLeft[Spawn] != 0) Projectile Object(202, EnemyX[Spawn] + 29, EnemyY[Spawn] + 15, EnemyDamage[Spawn], EnemyLeft[Spawn], TimeMultiplier);
 				}
 
-				Attacking[Spawn] -= 1;
-				if (Attacking[Spawn] == 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 150, EnemySpeed[Spawn] = 1, Falling[Spawn] = false, MoveFrame[Spawn] = true; }
+				Attacking[Spawn] -= 1 * TimeMultiplier;
+				if (Attacking[Spawn] <= 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 150 * TimeMultiplier, EnemySpeed[Spawn] = 1, Falling[Spawn] = false, MoveFrame[Spawn] = true; }
 			}
 
 
@@ -1916,7 +1958,7 @@ namespace Tmpl8
 					ForcedDirection[Spawn] = -1;
 				
 				Attacking[Spawn] += 1;
-				Attacking[Spawn] = Attacking[Spawn] % 3;
+				Attacking[Spawn] = static_cast<int>(Attacking[Spawn]) % 3;
 
 				if (Attacking[Spawn] == 0)
 				{
@@ -1929,36 +1971,36 @@ namespace Tmpl8
 			if (Enemies[Spawn] == 302) //the tank necromancer will summon the undead when onscreen
 			{
 				
-				if (Attacking[Spawn] < 1)
+				if (Attacking[Spawn] <= 0)
 				{
-					Attacking[Spawn] = 75;
+					Attacking[Spawn] = 75 * TimeMultiplier;
 				}
 				if (Attacking[Spawn] > 0)
 				{
-					EnemyAttackFrame[Spawn] = 5 - (Attacking[Spawn] / 15);
+					EnemyAttackFrame[Spawn] = 5 - (static_cast<int>(Attacking[Spawn]) / 15);
 				}
-				if (Attacking[Spawn] == 1)
+				if (Attacking[Spawn] <= 1 * TimeMultiplier)
 				{
 					if (EnemyLeft[Spawn] == 0) { CreateEnemy(500, EnemyX[Spawn] - 32, EnemyY[Spawn]); } //undead are immune to the electric element
 					if (EnemyLeft[Spawn] != 0) { CreateEnemy(500, EnemyX[Spawn] + 32, EnemyY[Spawn]); }
 				}
 
-				Attacking[Spawn] -= 1;
-				if (Attacking[Spawn] == 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 450, EnemySpeed[Spawn] = 1, Falling[Spawn] = false, MoveFrame[Spawn] = true; }
+				Attacking[Spawn] -= 1 * TimeMultiplier;
+				if (Attacking[Spawn] <= 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 450 * TimeMultiplier, EnemySpeed[Spawn] = 1, Falling[Spawn] = false, MoveFrame[Spawn] = true; }
 
 			}
 
 		}
 	}
 
-	void BossAttack(int charx, int chary, int Spawn)
+	void BossAttack(float charx, float chary, int Spawn, float TimeMultiplier)
 	{
 		if (EnemyHp[Spawn] < 1000 && EnemyHp[Spawn] > 600) //the sleep sequence, damage you do here does not matter unless you can do over 400 damage before he is out of range
 		{
 			if (EnemyY[Spawn] > 960)
 			{
 				if (EnemyY[Spawn] == 1250) EnemyAttackFrame[Spawn] = 11;
-				EnemyY[Spawn] -= 2;
+				EnemyY[Spawn] -= 2 * TimeMultiplier;
 				if (EnemyY[Spawn] == 960) EnemyAttackFrame[Spawn] = 0, EnemyHp[Spawn] = 600, Attacking[Spawn] = 150, attackchoice[Spawn] = 0;
 			}
 		}
@@ -1971,7 +2013,7 @@ namespace Tmpl8
 			std::uniform_int_distribution<> Block(0, 576);
 			
 
-			if (Attacking[Spawn] < 1)
+			if (Attacking[Spawn] <= 0)
 			{
 				if (BossAttackPity < 5) //the 'spike' attack is needed to damage the boss, so to prevent bad luck, the spikes attack will happen at worst every 5 attacks
 					attackchoice[Spawn] = pick(attack);
@@ -1981,51 +2023,51 @@ namespace Tmpl8
 
 
 				if (attackchoice[Spawn] == 1) //dropping blocks
-					Attacking[Spawn] = 300, BossAttackPity += 1;
+					Attacking[Spawn] = 300 * TimeMultiplier, BossAttackPity += 1;
 				if (attackchoice[Spawn] == 2) //summon spikes
-					Attacking[Spawn] = 300, BossAttackPity = 0;
+					Attacking[Spawn] = 300 * TimeMultiplier, BossAttackPity = 0;
 				if (attackchoice[Spawn] == 3) //summon undead
-					Attacking[Spawn] = 300, BossAttackPity += 1;
+					Attacking[Spawn] = 300 * TimeMultiplier, BossAttackPity += 1;
 
 			}
 			
 			
 			
-			if (attackchoice[Spawn] == 1 && Attacking[Spawn] <= 300 && Attacking[Spawn] > 0)
+			if (attackchoice[Spawn] == 1 && Attacking[Spawn] <= 300 * TimeMultiplier && Attacking[Spawn] > 0)
 			{
-				if (Attacking[Spawn] == 300)
+				if (Attacking[Spawn] == 300 * TimeMultiplier)
 				{
 					for (int i = 0; i < 10; i++) //creates 10 falling blocks
 					{
 						int tempX = Block(Placing);
-						Projectile Object(901, 21 * 32 + tempX, 16 * 32, 5, 0);
+						Projectile Object(901, 21 * 32 + tempX, 16 * 32, 5, 0, TimeMultiplier);
 					}
 				}
-				if (Attacking[Spawn] > 200 && Attacking[Spawn] < 250)
+				if (Attacking[Spawn] > 200 * TimeMultiplier && Attacking[Spawn] < 250 * TimeMultiplier)
 				{
-					EnemyAttackFrame[Spawn] = (Attacking[Spawn] - 200) / 5; //fall animation is delayed because the falling blocks cant be seen untill later
+					EnemyAttackFrame[Spawn] = (static_cast<int>(Attacking[Spawn]) - 200) / 5; //fall animation is delayed because the falling blocks cant be seen untill later
 				}
 			}
 			if (attackchoice[Spawn] == 2)
 			{
-				if (Attacking[Spawn] > 200 && Attacking[Spawn] < 250)
+				if (Attacking[Spawn] > 200 * TimeMultiplier && Attacking[Spawn] < 250 * TimeMultiplier)
 				{
-					EnemyAttackFrame[Spawn] = 9 - ((Attacking[Spawn] - 200) / 5);
+					EnemyAttackFrame[Spawn] = 9 - (static_cast<int>(Attacking[Spawn] - 200) / 5);
 				}
-				if (Attacking[Spawn] % 80 == 0 && Attacking[Spawn] > 59) //creates spikes every 80 frames
+				if (static_cast<int>(Attacking[Spawn]) % 80 == 0 && Attacking[Spawn] > 59 * TimeMultiplier) //creates spikes every 80 frames
 				{
 					EnemyAttackFrame[Spawn] = 9;
-					Projectile Object(902, 12*32 + charx, 39 * 32, 0, 0);
+					Projectile Object(902, 12*32 + charx, 39 * 32, 0, 0, TimeMultiplier);
 				}
 			}
 			if (attackchoice[Spawn] == 3)
 			{
-				if (Attacking[Spawn] == 300)
+				if (Attacking[Spawn] == 300 * TimeMultiplier)
 				{
 					ClearMap();
-					Projectile Object(903, 22 * 32, 39 * 32, 0, 0); //creates sand cloud and then summons undead
+					Projectile Object(903, 22 * 32, 39 * 32, 0, 0, TimeMultiplier); //creates sand cloud and then summons undead
 				}
-				if (Attacking[Spawn] == 1)
+				if (Attacking[Spawn] <= 1 * TimeMultiplier)
 				{
 					CreateEnemy(500, 22 * 32, 39 * 32);
 					CreateEnemy(500, 24 * 32, 39 * 32);
@@ -2040,10 +2082,10 @@ namespace Tmpl8
 		}
 
 
-		Attacking[Spawn] -= 1;
-		if (Attacking[Spawn] == 0) 
+		Attacking[Spawn] -= 1 * TimeMultiplier;
+		if (Attacking[Spawn] <= 0) 
 		{
-			AttackTimer[Spawn] = 225, attackchoice[Spawn] = 0 , EnemyAttackFrame[Spawn] = 0;
+			AttackTimer[Spawn] = 225 * TimeMultiplier, attackchoice[Spawn] = 0 , EnemyAttackFrame[Spawn] = 0;
 		}
 	}
 

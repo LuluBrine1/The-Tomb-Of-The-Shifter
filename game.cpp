@@ -64,7 +64,7 @@ namespace Tmpl8
 	const int spritex = 384, spritey = 240;
 
 	//used for movement and animations
-	int MoveSpeed = 1;
+	float MoveSpeed = 1;
 	float moving = 0;
 	float gravity = 0;
 	int jumps = 1;
@@ -87,7 +87,8 @@ namespace Tmpl8
 	int Element = 0;
 
 	float TimeTaken = 0;
-	const float GameSpeed = 13.333333333; //caps the game at 75 fps. this is because thats the refresh rate of my monitor
+	float GameSpeed = 13.333333333; //caps the game at 75 fps. this is because thats the refresh rate of my monitor
+	//float GameSpeed = 23.333333333;
 
 	//functions used in other files
 	int CheckElement()
@@ -562,14 +563,14 @@ namespace Tmpl8
 		leftmouse = false;
 	}
 
-	void Game::CharacterMovement()
+	void Game::CharacterMovement(float TimeMultiplier)
 	{
 		//character movement and spritework
 		if (left)
 		{
 			if (!Collision(leftx - MoveSpeed, topy, charx, chary) && !Collision(leftx - MoveSpeed, bottomy, charx, chary)) //prevents walking into walls
 			{
-				charx -= MoveSpeed;
+				charx -= (MoveSpeed * TimeMultiplier);
 			}
 			moving += 0.1;
 		}
@@ -578,7 +579,7 @@ namespace Tmpl8
 		{
 			if (!Collision(rightx + MoveSpeed, topy, charx, chary) && !Collision(rightx + MoveSpeed, bottomy, charx, chary)) //prevents walking into walls
 			{
-				charx += MoveSpeed;
+				charx += (MoveSpeed * TimeMultiplier);
 			}
 			moving += 0.1;
 		}
@@ -595,8 +596,8 @@ namespace Tmpl8
 				if (gravity < 0) gravity = 0, jumps = MaxJumps;
 		}
 
-		chary += gravity;
-		gravity -= 0.1;
+		chary += (gravity * TimeMultiplier);
+		gravity -= (0.1 * TimeMultiplier);
 
 		//facing direction independent of moving direction direction so you can shoot whichever direction while moving
 		if (mousex < centrex)
@@ -713,6 +714,8 @@ namespace Tmpl8
 
 	void Game::Tick(float DeltaTime)
 	{
+		float TimeMultiplier = DeltaTime / GameSpeed;
+
 		switch (gameState)
 		{
 		case MainMenu: //while in the main menu	
@@ -720,7 +723,7 @@ namespace Tmpl8
 			break;
 
 		case Shop: //the way to permanently upgrade your character to make your future runs easier
-			TickShop();	
+			TickShop();
 			break;
 
 		case Win: //win
@@ -741,70 +744,65 @@ namespace Tmpl8
 
 		case Run: //during the actual game
 
-			if (int(TimeTaken / GameSpeed) > int((TimeTaken - DeltaTime) / GameSpeed)) //next movement only happens if the frame coincides with the 75 fps rate
+
+			CharacterMovement(TimeMultiplier);
+
+			if (Element == 0 && PickElement) //if you have no element active, your move speed is doubled.
 			{
-
-
-				CharacterMovement();
-
-				if (Element == 0 && PickElement) //if you have no element active, your move speed is doubled.
-				{
-					MoveSpeed = 2; //this is because i wanted there to be a reason to not have an element, and also to make it quicker to exit a room and such
-				}
-				else
-				{
-					MoveSpeed = 1;
-				}
-
-				int closestwallx = centrex; //needed for bullet collision values
-
-				while (!Collision(closestwallx, 255, charx, chary))
-				{
-					if (mousex < 400) { closestwallx--; }
-					if (mousex > 399) { closestwallx++; }
-				}
-
-				if (Rkey)
-				{
-					ManualReload();
-				}
-
-
-				//main gameplay loop: clear and draw map, move and draw character and gun, Enemies and projectile act, check if gun is reloading and firing
-
-				screen->Clear(0x0056CE);
-				Level.DrawMap(screen, charx, chary);
-				MainCharacter.Draw(screen, spritex, spritey);
-				if (guntype < 10) { Gun.Draw(screen, spritex, spritey); }
-				if (guntype >= 10) { EvolvedGun.Draw(screen, spritex, spritey); }
-				EnemyAction(screen, charx, chary);
-				ProjectileAction(screen, charx, chary);
-				weapon.reload(screen);
-				weapon.Fire(screen, mousex, leftmouse, closestwallx, left, right, charx, chary);
-				enemies = EnemyCount(screen);
-
-
-				if (CheckDeath())
-				{
-					gameState = Loss;
-				}
-
-				if (Qkey && PickElement)
-				{
-					gameState = ElementSelect;
-				}
-
-				if (enemies == 0)
-				{
-					ClearedRoom();
-				}
-
-
-				TimeTaken += DeltaTime;
+				MoveSpeed = 2; //this is because i wanted there to be a reason to not have an element, and also to make it quicker to exit a room and such
 			}
+			else
+			{
+				MoveSpeed = 1;
+			}
+
+			int closestwallx = centrex; //needed for bullet collision values
+
+			while (!Collision(closestwallx, 255, charx, chary))
+			{
+				if (mousex < 400) { closestwallx--; }
+				if (mousex > 399) { closestwallx++; }
+			}
+
+			if (Rkey)
+			{
+				ManualReload();
+			}
+
+
+			//main gameplay loop: clear and draw map, move and draw character and gun, Enemies and projectile act, check if gun is reloading and firing
+
+			screen->Clear(0x0056CE);
+			Level.DrawMap(screen, charx, chary);
+			MainCharacter.Draw(screen, spritex, spritey);
+			if (guntype < 10) { Gun.Draw(screen, spritex, spritey); }
+			if (guntype >= 10) { EvolvedGun.Draw(screen, spritex, spritey); }
+			EnemyAction(screen, charx, chary, TimeMultiplier);
+			ProjectileAction(screen, charx, chary, TimeMultiplier);
+			weapon.reload(screen, TimeMultiplier);
+			weapon.Fire(screen, mousex, leftmouse, closestwallx, left, right, charx, chary, TimeMultiplier);
+			enemies = EnemyCount(screen);
+
+
+			if (CheckDeath())
+			{
+				gameState = Loss;
+			}
+
+			if (Qkey && PickElement)
+			{
+				gameState = ElementSelect;
+			}
+
+			if (enemies == 0)
+			{
+				ClearedRoom();
+			}
+
+
 
 			break;
-			}
+		}
 
 		
 	}

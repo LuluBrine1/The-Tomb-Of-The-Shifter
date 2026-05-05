@@ -53,7 +53,7 @@ namespace Tmpl8
 			biome = 1;
 			bossroom = false;
 			rockbiome = false;
-			firstrockroom == false;
+			firstrockroom = false;
 			for (int j = 0; j < 9; j++)
 			{
 				for (int i = 0; i < 14; i++)
@@ -1661,15 +1661,17 @@ namespace Tmpl8
 		return bossroom;
 	}
 
-	bool Collision(int x, int y, int charx, int chary) 
+	bool Collision(float x, float y, float charx, float chary) 
 	{
 		if (y > -1)
 		{
-			int tx = (x + charx) / 32, ty = (y - chary) / 32;
+			int tx = 0, ty = 0;
+			static_cast<int>( tx = (x + charx) / 32, ty = (y - chary) / 32);
 			if (tx > 59) tx = 59;
-			if (ty > 65000) return true;
+			//if (ty > 65000) return true;
 			return map[ty][tx * 4 + 2] == 'X'; //returns true if they collide aka solid object (not chest)
 		}
+		else return false;
 	}
 
 	bool CheckBoundary(int x, int y) //worm specific change, bottom of the map is a boundary so that it cant dig into it
@@ -1734,7 +1736,7 @@ namespace Tmpl8
 
 	}
 
-	int TileMap::Exit(int leftx, int rightx, int topy, int bottomy, int charx, int chary)
+	int TileMap::Exit(int leftx, int rightx, int topy, int bottomy, float charx, float chary)
 	{
 		int lefttx = (leftx + charx) / 32;
 		int righttx = (rightx + charx) / 32;
@@ -1810,7 +1812,7 @@ namespace Tmpl8
 		}
 	}
 
-	bool TileMap::CreateChest(int x, int y, int charx, int chary)
+	bool TileMap::CreateChest(int x, int y, float charx, float chary)
 	{
 		bool chest = false;
 		int tx = (x + charx) / 32, ty = (y - chary) / 32;
@@ -1823,11 +1825,13 @@ namespace Tmpl8
 		return chest;
 	}
 
-	bool TileMap::ChestInteraction(int x, int y, int charx, int chary)
+	bool TileMap::ChestInteraction(int x, int y, float charx, float chary)
 	{
 		int tx = (x + charx) / 32, ty = (y - chary) / 32;
 		if ((map[ty][tx * 4] == 'b' && map[ty][tx * 4 + 1] == 'b') || (map[ty][(tx - 1) * 4] == 'b' && map[ty][(tx - 1) * 4 + 1] == 'b') || (map[ty][(tx + 1) * 4] == 'b' && map[ty][(tx + 1) * 4 + 1] == 'b'))
 			return true; //if within a tile of the chest it can be accessed
+		else
+			return false;
 	}
 
 
@@ -1933,5 +1937,6 @@ namespace Tmpl8
 
 	}
 
+	
 };
 

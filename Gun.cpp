@@ -23,10 +23,11 @@ namespace Tmpl8
 	//ammo is the amount of times you can shoot before needing to reload
 	//firerate is how long it takes before you can shoot again, measure in ticks
 
-	int magazine = 0, reloading = 0, cooldown = 0; //temporary variables for ammo, reload, and firerate respectively
+	int magazine = 0, cooldown = 0; //temporary variables for ammo, reload, and firerate respectively
+	float reloading = 0;
 	int barrelxleft = 0, barrelxright = 0, bheight1 = -1, bheight2 = -1; //bullet height and barrel x depends on the gun sprite, used to know where the bullet is firing from
 
-	int distance[20] = { 0 };   //variables for shooting distance, max projectiles is 10
+	float distance[20] = { 0 };   //variables for shooting distance, max projectiles is 20
 	int direction[20] = { 0 }; //variables for direction, -1 is left, 1 is right, 0 is for projectiles that arent firing
 
 	int verticality[20] = { 0 }; //make sure the projectile's y stays constant
@@ -226,7 +227,7 @@ namespace Tmpl8
 		magazine = ammo, reloading = reloadrate, cooldown = firerate;
 	}
 
-	void Firearm::reload(Surface* screen)
+	void Firearm::reload(Surface* screen, float TimeMultiplier)
 	{
 		int Element = CheckElement();
 		if (Element == 0)
@@ -267,11 +268,10 @@ namespace Tmpl8
 				int j = ((reloading * 100) / reloadrate) * 14;
 				screen->Bar(392, 235, 392 + (j / 100), 238, 14483456);
 
-				reloading--;
+				reloading -= TimeMultiplier;
 
 			}
-
-			if (reloading == 0) //resets everything
+			else //resets everything
 			{
 				reloading = reloadrate; 
 				magazine = ammo;
@@ -284,7 +284,7 @@ namespace Tmpl8
 					stop[i] = false;
 				}
 				projectile = 0;
-				BeingHit(screen, 0, 0, 0, 0, 0, 0, -1); //resets projectile value
+				BeingHit(screen, 0, 0, 0, 0, 0, 0, -1, 0); //resets projectile value
 			}
 		}
 
@@ -309,7 +309,7 @@ namespace Tmpl8
 		}
 	}
 
-	void Firearm::Fire(Surface* screen, int mousex, int leftmouse, int closestwallx, int left, int right, int charx, int chary)
+	void Firearm::Fire(Surface* screen, int mousex, int leftmouse, int closestwallx, int left, int right, float charx, float chary, float TimeMultiplier)
 	{
 
 
@@ -353,7 +353,7 @@ namespace Tmpl8
 							if (weapon != 5 && weapon != 15 && weapon != 25 && weapon != 35 && weapon != 45 && weapon != 52 && weapon != 53 && weapon != 54) //if the weapon is not a twin gun variant
 							{ 
 								screen->Line(initial[i] + distance[i] - charx, bheight1 + chary - verticality[i], initial[i] + distance[i] - charx, bheight1 + chary - verticality[i], colour);
-								if (BeingHit(screen, initial[i] + distance[i] - charx, bheight1 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i) == true)
+								if (BeingHit(screen, initial[i] + distance[i] - charx, bheight1 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i, TimeMultiplier) == true)
 								{
 									stop[i] = true; //if the bullet hits the pierce cap, it gets removed
 								}
@@ -369,7 +369,7 @@ namespace Tmpl8
 								if (alternate[i] == false) 
 								{ 
 									screen->Line(initial[i] + distance[i] - charx, bheight1 + chary - verticality[i], initial[i] + distance[i] - charx, bheight1 + chary - verticality[i], colour);
-									if (BeingHit(screen, initial[i] + distance[i] - charx, bheight1 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i) == true)
+									if (BeingHit(screen, initial[i] + distance[i] - charx, bheight1 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i, TimeMultiplier) == true)
 									{
 										stop[i] = true;
 									}
@@ -377,7 +377,7 @@ namespace Tmpl8
 								if (alternate[i] == true) 
 								{ 
 									screen->Line(initial[i] + distance[i] - charx, bheight2 + chary - verticality[i], initial[i] + distance[i] - charx, bheight2 + chary - verticality[i], colour);
-									if (BeingHit(screen, initial[i] + distance[i] - charx, bheight2 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i) == true)
+									if (BeingHit(screen, initial[i] + distance[i] - charx, bheight2 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i, TimeMultiplier) == true)
 									{
 										stop[i] = true;
 									}
@@ -389,7 +389,7 @@ namespace Tmpl8
 								if (alternate[i] == false) 
 								{ 
 									screen->Line(initial[i] + distance[i] - charx, bheight1 + chary - verticality[i], initial[i] + distance[i] - charx, bheight1 + chary - verticality[i] - 1, colour);
-									if (BeingHit(screen, initial[i] + distance[i] - charx, bheight1 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i) == true)
+									if (BeingHit(screen, initial[i] + distance[i] - charx, bheight1 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i, TimeMultiplier) == true)
 									{
 										stop[i] = true;
 									}
@@ -397,7 +397,7 @@ namespace Tmpl8
 								if (alternate[i] == true) 
 								{ 
 									screen->Line(initial[i] + distance[i] - charx, bheight2 + chary - verticality[i], initial[i] + distance[i] - charx, bheight2 + chary - verticality[i] - 1, colour);
-									if (BeingHit(screen, initial[i] + distance[i] - charx, bheight2 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i) == true)
+									if (BeingHit(screen, initial[i] + distance[i] - charx, bheight2 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i, TimeMultiplier) == true)
 									{
 										stop[i] = true;
 									}
@@ -415,7 +415,7 @@ namespace Tmpl8
 							if (weapon != 5 && weapon != 15 && weapon != 25 && weapon != 35 && weapon != 45 && weapon != 52 && weapon != 53 && weapon != 54) //if the weapon is not a twin gun variant
 							{ 
 								screen->Line(initial[i] - distance[i] - charx, bheight1 + chary - verticality[i], initial[i] - distance[i] - charx, bheight1 + chary - verticality[i], colour);
-								if (BeingHit(screen, initial[i] - distance[i] - charx, bheight1 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i) == true)
+								if (BeingHit(screen, initial[i] - distance[i] - charx, bheight1 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i, TimeMultiplier) == true)
 								{
 									stop[i] = true;
 								}
@@ -431,7 +431,7 @@ namespace Tmpl8
 								if (alternate[i] == false) 
 								{ 
 									screen->Line(initial[i] - distance[i] - charx, bheight1 + chary - verticality[i], initial[i] - distance[i] - charx, bheight1 + chary - verticality[i], colour);
-									if (BeingHit(screen, initial[i] - distance[i] - charx, bheight1 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i) == true)
+									if (BeingHit(screen, initial[i] - distance[i] - charx, bheight1 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i, TimeMultiplier) == true)
 									{
 										stop[i] = true;
 									}
@@ -439,7 +439,7 @@ namespace Tmpl8
 								if (alternate[i] == true) 
 								{ 
 									screen->Line(initial[i] - distance[i] - charx, bheight2 + chary - verticality[i], initial[i] - distance[i] - charx, bheight2 + chary - verticality[i], colour);
-									if (BeingHit(screen, initial[i] - distance[i] - charx, bheight2 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i) == true)
+									if (BeingHit(screen, initial[i] - distance[i] - charx, bheight2 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i, TimeMultiplier) == true)
 									{
 										stop[i] = true;
 									}
@@ -451,7 +451,7 @@ namespace Tmpl8
 								if (alternate[i] == false) 
 								{ 
 									screen->Line(initial[i] - distance[i] - charx, bheight1 + chary - verticality[i], initial[i] - distance[i] - charx, bheight1 + chary - verticality[i] - 1, colour);
-									if (BeingHit(screen, initial[i] - distance[i] - charx, bheight1 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i) == true)
+									if (BeingHit(screen, initial[i] - distance[i] - charx, bheight1 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i, TimeMultiplier) == true)
 									{
 										stop[i] = true;
 									}
@@ -459,7 +459,7 @@ namespace Tmpl8
 								if (alternate[i] == true) 
 								{ 
 									screen->Line(initial[i] - distance[i] - charx, bheight2 + chary - verticality[i], initial[i] - distance[i] - charx, bheight2 + chary - verticality[i] - 1, colour);
-									if (BeingHit(screen, initial[i] - distance[i] - charx, bheight2 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i) == true)
+									if (BeingHit(screen, initial[i] - distance[i] - charx, bheight2 + chary - verticality[i], charx, chary, damage + AdditionalDamage, pierce, i, TimeMultiplier) == true)
 									{
 										stop[i] = true;
 									}
@@ -469,7 +469,7 @@ namespace Tmpl8
 							if (((barrelxleft) - 1 - distance[i] - speed) <= wallx[i]) { stop[i] = true; }
 						}
 
-						distance[i] += speed;
+						distance[i] += (speed * TimeMultiplier);
 
 						
 
