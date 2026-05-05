@@ -650,7 +650,9 @@ namespace Tmpl8
 
 				UpdateHitbox(i);
 
+				printf("Preparing Movement -% d\n", Enemies[i]);
 				EnemyMovement(charx, chary, i);
+				printf("Movement Done -% d\n", Enemies[i]);
 
 				if (MoveTimer[i] > 0) //if moving regularly, enemies can only move every 4th frame. this means that i can have slower enemies than 1 pixel/frame
 					MoveTimer[i] -= 1; //if direction is forced, move every frame because forced direction is part of an attack for fast enemies
@@ -669,9 +671,9 @@ namespace Tmpl8
 
 					std::string ElementalImmunity = "Current Immunity: ";
 
-					if (ElementResistance[i] == 1) {  ElementalImmunity = "Current Immunity: Fire"; };
-					if (ElementResistance[i] == 2) {  ElementalImmunity = "Current Immunity: Ice"; };
-					if (ElementResistance[i] == 3) {  ElementalImmunity = "Current Immunity: Electric";  };
+					if (ElementResistance[i] == 1) {  ElementalImmunity += "Fire"; };
+					if (ElementResistance[i] == 2) {  ElementalImmunity += "Ice"; };
+					if (ElementResistance[i] == 3) {  ElementalImmunity += "Electric";  };
 
 					screen->Print(ElementalImmunity.c_str(), 340, 20, 0x888888);
 				}
@@ -855,9 +857,11 @@ namespace Tmpl8
 							}
 							if (Pierce < 1)
 							{
-								return true;
-								break; //immediatly deletes the bullet
+								return true; //immediatly deletes the bullet
+								break;
 							}
+							else
+								return false;
 						}
 
 					}
@@ -865,6 +869,7 @@ namespace Tmpl8
 			}
 
 		}
+		return false;
 	}
 
 	bool CheckDeath()
@@ -1049,9 +1054,9 @@ namespace Tmpl8
 				if (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false)
 				{
 					Falling[Spawn] = true;
-					EnemyY[Spawn] -= EnemyGravity[Spawn];
+					EnemyY[Spawn] -= (int)EnemyGravity[Spawn];
 					EnemyGravity[Spawn] -= 0.1;
-					while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1 - EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1 - EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1 - EnemyGravity[Spawn], 0, 0) == true)
+					while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1 - (int)EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1 - (int)EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1 - (int)EnemyGravity[Spawn], 0, 0) == true)
 					{
 						EnemyGravity[Spawn] += 0.1;
 					}
@@ -1067,7 +1072,7 @@ namespace Tmpl8
 			}
 			if (Falling[Spawn] == true)
 			{
-				while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] - 1 - EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + Yoffset[Spawn] - 1 - EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] - 1 - EnemyGravity[Spawn], 0, 0) == true)
+				while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] - 1 - (int)EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + Yoffset[Spawn] - 1 - (int)EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] - 1 - (int)EnemyGravity[Spawn], 0, 0) == true)
 				{
 					EnemyGravity[Spawn] -= 0.1;
 				}
@@ -1230,7 +1235,7 @@ namespace Tmpl8
 		//gravity
 		if (GravitationalProjectile[Number] == true)
 		{
-			ProjectileY[Number] -= ProjectileGravity[Number];
+			ProjectileY[Number] -= (int)ProjectileGravity[Number];
 			ProjectileGravity[Number] -= 0.05;
 
 			if (Collision(ProjectileX[Number] + ProjectileXoffset[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number] + 1, 0, 0) == true || Collision(ProjectileX[Number] + ProjectileXoffset[Number] + ProjectileWidth[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number] + 1, 0, 0) == true)
@@ -1240,7 +1245,7 @@ namespace Tmpl8
 					Lifetime[Number] = 0;
 				else if (Bounces[Number] > 0)
 				{
-					if (ProjectileGravity[Number] > 1) ProjectileGravity[Number] = ProjectileGravity[Number] * -0.8;
+					if (ProjectileGravity[Number] > 1) ProjectileGravity[Number] = static_cast<int>(ProjectileGravity[Number] * -0.8);
 					else ProjectileGravity[Number] += 1;
 					while (Collision(ProjectileX[Number] + ProjectileXoffset[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number], 0, 0) == true || Collision(ProjectileX[Number] + ProjectileXoffset[Number] + ProjectileWidth[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number], 0, 0) == true)
 					{
@@ -1255,7 +1260,7 @@ namespace Tmpl8
 			if (Lifetime[Number] <= 10)
 			{
 				ProjectileFrame[Number] = 0;
-				ProjectileDamage[Number] = maxhp * 0.2;
+				ProjectileDamage[Number] = (int)(maxhp * 0.2);
 				if (Attacking[Spawn] < 80)
 				{
 					CreateTile(ProjectileX[Number], ProjectileY[Number]); //at the end of its lifespan, the projectile creates permanent blocks for you to attack the enemy

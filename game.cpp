@@ -59,9 +59,9 @@ namespace Tmpl8
 	Firearm weapon{ 0 };
 
 	//hitboxes for the player character. the character never moves so these are important values
-	int leftx = 391, rightx = 408, centrex = 400, centrey = 256;
-	int topy = 240, bottomy = 271;
-	int spritex = 384, spritey = 240;
+	const int leftx = 391, rightx = 408, centrex = 400, centrey = 256;
+	const int topy = 240, bottomy = 271;
+	const int spritex = 384, spritey = 240;
 
 	//used for movement and animations
 	int MoveSpeed = 1;
@@ -87,7 +87,7 @@ namespace Tmpl8
 	int Element = 0;
 
 	float TimeTaken = 0;
-	float GameSpeed = 13.333333333; //caps the game at 75 fps. this is because thats the refresh rate of my monitor
+	const float GameSpeed = 13.333333333; //caps the game at 75 fps. this is because thats the refresh rate of my monitor
 
 	//functions used in other files
 	int CheckElement()
@@ -290,9 +290,9 @@ namespace Tmpl8
 			screen->Bar(segment + 2, 310, segment + 50, 370, 0x00dd00);
 		}
 
-		int HealthPrice[5] = { 100, 200, 300, 400, 500 };
-		int LifestealPrice[5] = { 300, 350, 400, 450, 500 };
-		int MaxjumpPrice[5] = { 500, 550, 600, 650, 700 };
+		int HealthPrice[6] = { 100, 200, 300, 400, 500, 9999 };
+		int LifestealPrice[6] = { 300, 350, 400, 450, 500, 9999 };
+		int MaxjumpPrice[6] = { 500, 550, 600, 650, 700, 9999 };
 
 		if (ExtraHealth < 10)
 		{
@@ -303,14 +303,14 @@ namespace Tmpl8
 
 		if (Lifesteal < 5)
 		{
-			std::string BuyLifesteal = std::to_string(LifestealPrice[ExtraHealth / 2]);
+			std::string BuyLifesteal = std::to_string(LifestealPrice[Lifesteal]);
 			screen->Bar(375, 230, 425, 250, 0x888888);
 			screen->Print(BuyLifesteal.c_str(), 392, 238, 0xFFFFFF);
 		}
 
 		if (MaxJumps - 1 < 5)
 		{
-			std::string BuyJumps = std::to_string(MaxjumpPrice[ExtraHealth / 2]);
+			std::string BuyJumps = std::to_string(MaxjumpPrice[MaxJumps - 1]);
 			screen->Bar(375, 330, 425, 350, 0x888888);
 			screen->Print(BuyJumps.c_str(), 392, 338, 0xFFFFFF);
 		}
@@ -599,7 +599,7 @@ namespace Tmpl8
 		gravity -= 0.1;
 
 		//facing direction independent of moving direction direction so you can shoot whichever direction while moving
-		if (mousex < 400)
+		if (mousex < centrex)
 		{
 			if (left || right)
 			{
@@ -615,7 +615,7 @@ namespace Tmpl8
 			if (guntype >= 10) { EvolvedGun.SetFrame(guntype); }
 		}
 
-		if (mousex > 399)
+		if (mousex >= centrex)
 		{
 			if (left || right)
 			{
