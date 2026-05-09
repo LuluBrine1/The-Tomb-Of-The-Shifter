@@ -1665,8 +1665,7 @@ namespace Tmpl8
 	{
 		if (y > -1)
 		{
-			int tx = 0, ty = 0;
-			static_cast<int>( tx = (x + charx) / 32, ty = (y - chary) / 32);
+			int tx = static_cast<int>((x + charx)) / 32, ty = static_cast<int>((y - chary) / 32);
 			if (tx > 59) tx = 59;
 			//if (ty > 65000) return true;
 			return map[ty][tx * 4 + 2] == 'X'; //returns true if they collide aka solid object (not chest)
@@ -1674,10 +1673,10 @@ namespace Tmpl8
 		else return false;
 	}
 
-	bool CheckBoundary(int x, int y) //worm specific change, bottom of the map is a boundary so that it cant dig into it
+	bool CheckBoundary(float x, float y) //worm specific change, bottom of the map is a boundary so that it cant dig into it
 	{
 		
-		int tx = (x) / 32, ty = (y) / 32;
+		int tx = static_cast<int>(x / 32), ty = static_cast<int>(y / 32);
 		if (map[ty][tx * 4 + 2] == 'B')
 		{
 			return true;
@@ -1738,10 +1737,10 @@ namespace Tmpl8
 
 	int TileMap::Exit(int leftx, int rightx, int topy, int bottomy, float charx, float chary)
 	{
-		int lefttx = (leftx + charx) / 32;
-		int righttx = (rightx + charx) / 32;
-		int topty = (topy - chary) / 32;
-		int bottomty = (bottomy - chary) / 32;
+		int lefttx = static_cast<int>((leftx + charx) / 32);
+		int righttx = static_cast<int>((rightx + charx) / 32);
+		int topty = static_cast<int>((topy - chary) / 32);
+		int bottomty = static_cast<int>((bottomy - chary) / 32);
 
 		bool TL = map[topty][lefttx * 4 + 2] == 'E';
 		bool TR = map[topty][righttx * 4 + 2] == 'E';
@@ -1815,7 +1814,7 @@ namespace Tmpl8
 	bool TileMap::CreateChest(int x, int y, float charx, float chary)
 	{
 		bool chest = false;
-		int tx = (x + charx) / 32, ty = (y - chary) / 32;
+		int tx = static_cast<int>((x + charx) / 32), ty = static_cast<int>((y - chary) / 32);
 		if (map[ty + 1][tx * 4 + 2] == 'X')
 		{
 			map[ty][tx * 4] = 'b';
@@ -1827,7 +1826,7 @@ namespace Tmpl8
 
 	bool TileMap::ChestInteraction(int x, int y, float charx, float chary)
 	{
-		int tx = (x + charx) / 32, ty = (y - chary) / 32;
+		int tx = static_cast<int>((x + charx) / 32), ty = static_cast<int>((y - chary) / 32);
 		if ((map[ty][tx * 4] == 'b' && map[ty][tx * 4 + 1] == 'b') || (map[ty][(tx - 1) * 4] == 'b' && map[ty][(tx - 1) * 4 + 1] == 'b') || (map[ty][(tx + 1) * 4] == 'b' && map[ty][(tx + 1) * 4 + 1] == 'b'))
 			return true; //if within a tile of the chest it can be accessed
 		else

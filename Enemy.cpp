@@ -438,24 +438,24 @@ namespace Tmpl8
 		ProjectileFrame[Number] = ProjectileFrame[Number] % ProjectileFrameCount[Number];
 		//almost done
 		if (ProjectileType[Number] == 22) { SpitterProjectile.SetFrame(ProjectileFrame[Number]), SpitterProjectile.Draw(screen, static_cast<int>(ProjectileX[Number] - charx), static_cast<int>(ProjectileY[Number] + chary)); }
-		if (ProjectileType[Number] == 201) { SkullProjectile.SetFrame(ProjectileFrame[Number]), SkullProjectile.Draw(screen, ProjectileX[Number] - charx, ProjectileY[Number] + chary); }
-		if (ProjectileType[Number] == 202) { RaiderProjectile.SetFrame(ProjectileFrame[Number]), RaiderProjectile.Draw(screen, ProjectileX[Number] - charx, ProjectileY[Number] + chary); }
+		if (ProjectileType[Number] == 201) { SkullProjectile.SetFrame(ProjectileFrame[Number]), SkullProjectile.Draw(screen, static_cast<int>(ProjectileX[Number] - charx), static_cast<int>(ProjectileY[Number] + chary)); }
+		if (ProjectileType[Number] == 202) { RaiderProjectile.SetFrame(ProjectileFrame[Number]), RaiderProjectile.Draw(screen, static_cast<int>(ProjectileX[Number] - charx), static_cast<int>(ProjectileY[Number] + chary)); }
 		
 		if (ProjectileType[Number] == 901) 
 		{ 
-			Attack1.SetFrame(0), Attack1.Draw(screen, ProjectileX[Number] - charx, ProjectileY[Number] + chary); 
+			Attack1.SetFrame(0), Attack1.Draw(screen, static_cast<int>(ProjectileX[Number] - charx), static_cast<int>(ProjectileY[Number] + chary));
 
-			int TempY = 39;
+			float TempY = 39;
 			while (Collision(ProjectileX[Number], TempY * 32, 0, 0) == true) { TempY -= 1; }
 
-			Attack1.SetFrame(1), Attack1.Draw(screen, ProjectileX[Number] - charx,  TempY*32 + chary); //creates a warning block at the landing position
+			Attack1.SetFrame(1), Attack1.Draw(screen, static_cast<int>(ProjectileX[Number] - charx), static_cast<int>(TempY*32 + chary)); //creates a warning block at the landing position
 		}
 		if (ProjectileType[Number] == 902) 
 		{
-			if (Lifetime[Number] > 10) Attack2.SetFrame(1), Attack2.Draw(screen, ProjectileX[Number] - charx, ProjectileY[Number] + chary);
-			else Attack2.SetFrame(0), Attack2.Draw(screen, ProjectileX[Number] - charx, ProjectileY[Number] + chary); //turns warning block into actual block
+			if (Lifetime[Number] > 10) Attack2.SetFrame(1), Attack2.Draw(screen, static_cast<int>(ProjectileX[Number] - charx), static_cast<int>(ProjectileY[Number] + chary));
+			else Attack2.SetFrame(0), Attack2.Draw(screen, static_cast<int>(ProjectileX[Number] - charx), static_cast<int>(ProjectileY[Number] + chary)); //turns warning block into actual block
 		}
-		if (ProjectileType[Number] == 903) { Attack3.SetFrame(0), Attack3.Draw(screen, 21 * 32 - charx, 39 * 32 + chary); }
+		if (ProjectileType[Number] == 903) { Attack3.SetFrame(0), Attack3.Draw(screen, static_cast<int>(21 * 32 - charx), static_cast<int>(39 * 32 + chary)); }
 
 	}
 
@@ -512,7 +512,7 @@ namespace Tmpl8
 
 			std::random_device rd;
 			std::mt19937 type(rd());
-			std::uniform_int_distribution<> wave(4, 4);
+			std::uniform_int_distribution<> wave(1, 5);
 
 			int WaveType = wave(type);
 
@@ -637,7 +637,6 @@ namespace Tmpl8
 					if (Enemies[i] == 999)
 					{
 						BossAttack(charx, chary, i, TimeMultiplier);
-
 					}
 					else
 					{
@@ -677,6 +676,8 @@ namespace Tmpl8
 
 					screen->Print(ElementalImmunity.c_str(), 340, 20, 0x888888);
 				}
+				
+				//EnemyHp[i] = 0;
 			}
 		}
 
@@ -814,7 +815,7 @@ namespace Tmpl8
 							{
 								if (ElementResistance[e] == Element) //enemies in the rock room have elemental resistances
 								{
-									screen->Print(Resisted.c_str(), EnemyX[e] + Xoffset[e] + (Width[e] / 2) - 30 - charx, EnemyY[e] + Yoffset[e] + (Height[e] / 2) + chary, 0xFFFFFF);
+									screen->Print(Resisted.c_str(), static_cast<int>(EnemyX[e] + Xoffset[e] + (Width[e] / 2) - 30 - charx), static_cast<int>(EnemyY[e] + Yoffset[e] + (Height[e] / 2) + chary), 0xFFFFFF);
 									if (Element == 3) //enemies that are immune to electric will stop the bullet completely
 									{
 										Pierce = 0;
@@ -923,8 +924,8 @@ namespace Tmpl8
 	{
 		if (Enemies[Spawn] > 0)
 		{
-			int Xlocation = EnemyX[Spawn] + (Xoffset[Spawn] + Width[Spawn]) / 2 - charx;
-			int Ylocation = EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + chary;
+			float Xlocation = EnemyX[Spawn] + (Xoffset[Spawn] + Width[Spawn]) / 2 - charx;
+			float Ylocation = EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + chary;
 			bool Above = false, Below = false, Left = false, Right = false, OnScreen = false;
 			if (Xlocation >= 0 && Xlocation < 800 && Ylocation >= 0 && Ylocation < 512)
 			{
@@ -1055,10 +1056,10 @@ namespace Tmpl8
 				{
 					Falling[Spawn] = true;
 					EnemyY[Spawn] -= EnemyGravity[Spawn] * TimeMultiplier;
-					EnemyGravity[Spawn] -= 0.1 * TimeMultiplier;
+					(EnemyGravity[Spawn]) -= static_cast<float>(0.1 * TimeMultiplier);
 					while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1 - (int)EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1 - (int)EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1 - (int)EnemyGravity[Spawn], 0, 0) == true)
 					{
-						EnemyGravity[Spawn] += 0.1 * TimeMultiplier;
+						(EnemyGravity[Spawn]) += static_cast<float>(0.1 * TimeMultiplier);
 					}
 				}
 				else
@@ -1074,7 +1075,7 @@ namespace Tmpl8
 			{
 				while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] - 1 - (int)EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + Yoffset[Spawn] - 1 - (int)EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] - 1 - (int)EnemyGravity[Spawn], 0, 0) == true)
 				{
-					EnemyGravity[Spawn] -= 0.1 * TimeMultiplier;
+					(EnemyGravity[Spawn]) -= static_cast<float>(0.1 * TimeMultiplier);
 				}
 			}
 
@@ -1124,7 +1125,7 @@ namespace Tmpl8
 				{
 					bool Air = false;
 					bool Boundary = false;
-					int BurrowY = EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn];
+					float BurrowY = EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn];
 					bool InGround = false;
 
 					while (Air == false && Boundary == false) //finds whether it can burrow through an object, which is only when air is below
@@ -1236,7 +1237,7 @@ namespace Tmpl8
 		if (GravitationalProjectile[Number] == true)
 		{
 			ProjectileY[Number] -= ProjectileGravity[Number] * TimeMultiplier;
-			ProjectileGravity[Number] -= 0.05 * TimeMultiplier;
+			ProjectileGravity[Number] -= static_cast<float>(0.05 * TimeMultiplier);
 
 			if (Collision(ProjectileX[Number] + ProjectileXoffset[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number] + 1, 0, 0) == true || Collision(ProjectileX[Number] + ProjectileXoffset[Number] + ProjectileWidth[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number] + 1, 0, 0) == true)
 			{
@@ -1245,7 +1246,7 @@ namespace Tmpl8
 					Lifetime[Number] = 0;
 				else if (Bounces[Number] > 0)
 				{
-					if (ProjectileGravity[Number] > 1) ProjectileGravity[Number] = static_cast<int>(ProjectileGravity[Number] * -0.8);
+					if (ProjectileGravity[Number] > 1) ProjectileGravity[Number] = static_cast<float>(ProjectileGravity[Number] * -0.8);
 					else ProjectileGravity[Number] += 1;
 					while (Collision(ProjectileX[Number] + ProjectileXoffset[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number], 0, 0) == true || Collision(ProjectileX[Number] + ProjectileXoffset[Number] + ProjectileWidth[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number], 0, 0) == true)
 					{
@@ -1263,7 +1264,7 @@ namespace Tmpl8
 				ProjectileDamage[Number] = (int)(maxhp * 0.2);
 				if (Attacking[Spawn] < 80)
 				{
-					CreateTile(ProjectileX[Number], ProjectileY[Number]); //at the end of its lifespan, the projectile creates permanent blocks for you to attack the enemy
+					CreateTile(static_cast<int>(ProjectileX[Number]), static_cast<int>(ProjectileY[Number])); //at the end of its lifespan, the projectile creates permanent blocks for you to attack the enemy
 				}
 			}
 
@@ -1539,8 +1540,8 @@ namespace Tmpl8
 
 	void EnemyAttack(float charx, float chary, int Spawn, float TimeMultiplier)
 	{
-		int Xlocation = EnemyX[Spawn] + (Xoffset[Spawn] + Width[Spawn]) / 2 - charx;
-		int Ylocation = EnemyY[Spawn] + (Yoffset[Spawn] + Height[Spawn]) / 2 + chary;
+		float Xlocation = EnemyX[Spawn] + (Xoffset[Spawn] + Width[Spawn]) / 2 - charx;
+		float Ylocation = EnemyY[Spawn] + (Yoffset[Spawn] + Height[Spawn]) / 2 + chary;
 		bool OnScreen = false;
 		if (Xlocation >= 0 && Xlocation < 800 && Ylocation >= 0 && Ylocation < 512)
 		{ OnScreen = true; }
@@ -1681,7 +1682,7 @@ namespace Tmpl8
 					}
 					if (Attacking[Spawn] < 25 * TimeMultiplier && Attacking[Spawn] > 10 * TimeMultiplier)
 					{
-						EnemyAttackFrame[Spawn] = (Attacking[Spawn] - 10) / 3;
+						EnemyAttackFrame[Spawn] = (static_cast<int>(Attacking[Spawn]) - 10) / 3;
 					}
 					if (Attacking[Spawn] <= 10 * TimeMultiplier && Attacking[Spawn] > 0)
 					{
@@ -1834,7 +1835,7 @@ namespace Tmpl8
 				{
 					MoveFrame[Spawn] = false;
 					Static[Spawn] = true;
-					EnemyAttackFrame[Spawn] = 9 - ((Attacking[Spawn] - 200) / 3);
+					EnemyAttackFrame[Spawn] = 9 - ((static_cast<int>(Attacking[Spawn]) - 200) / 3);
 				}
 				if ((Attacking[Spawn] < 200 && Attacking[Spawn] > 150 ) || (Attacking[Spawn] < 150 && Attacking[Spawn] > 100) || (Attacking[Spawn] < 100 && Attacking[Spawn] > 50) || (Attacking[Spawn] < 50 && Attacking[Spawn] > 0))
 				{
@@ -1958,7 +1959,7 @@ namespace Tmpl8
 					ForcedDirection[Spawn] = -1;
 				
 				Attacking[Spawn] += 1;
-				Attacking[Spawn] = static_cast<int>(Attacking[Spawn]) % 3;
+				Attacking[Spawn] = static_cast<float>(static_cast<int>(Attacking[Spawn]) % 3);
 
 				if (Attacking[Spawn] == 0)
 				{
@@ -1997,14 +1998,15 @@ namespace Tmpl8
 	{
 		if (EnemyHp[Spawn] < 1000 && EnemyHp[Spawn] > 600) //the sleep sequence, damage you do here does not matter unless you can do over 400 damage before he is out of range
 		{
+			EnemyAttackFrame[Spawn] = 10;
 			if (EnemyY[Spawn] > 960)
 			{
-				if (EnemyY[Spawn] == 1250) EnemyAttackFrame[Spawn] = 11;
-				EnemyY[Spawn] -= 2 * TimeMultiplier;
-				if (EnemyY[Spawn] == 960) EnemyAttackFrame[Spawn] = 0, EnemyHp[Spawn] = 600, Attacking[Spawn] = 150, attackchoice[Spawn] = 0;
+				if (EnemyY[Spawn] <= 1230) EnemyAttackFrame[Spawn] = 11;
+				EnemyY[Spawn] -= 2;
+				if (EnemyY[Spawn] <= 960) EnemyAttackFrame[Spawn] = 0, EnemyHp[Spawn] = 600, Attacking[Spawn] = 150, attackchoice[Spawn] = 0;
 			}
 		}
-		if (EnemyHp[Spawn] < 601 && EnemyHp[Spawn] > 0)
+		else if (EnemyHp[Spawn] < 601 && EnemyHp[Spawn] > 0)
 		{
 			std::random_device rd;
 			std::mt19937 attack(rd());
@@ -2040,7 +2042,7 @@ namespace Tmpl8
 					for (int i = 0; i < 10; i++) //creates 10 falling blocks
 					{
 						int tempX = Block(Placing);
-						Projectile Object(901, 21 * 32 + tempX, 16 * 32, 5, 0, TimeMultiplier);
+						Projectile Object(901, static_cast<float>(21 * 32 + tempX), 16 * 32, 5, 0, TimeMultiplier);
 					}
 				}
 				if (Attacking[Spawn] > 200 * TimeMultiplier && Attacking[Spawn] < 250 * TimeMultiplier)
@@ -2078,14 +2080,11 @@ namespace Tmpl8
 				}
 			}
 
-
-		}
-
-
-		Attacking[Spawn] -= 1 * TimeMultiplier;
-		if (Attacking[Spawn] <= 0) 
-		{
-			AttackTimer[Spawn] = 225 * TimeMultiplier, attackchoice[Spawn] = 0 , EnemyAttackFrame[Spawn] = 0;
+			Attacking[Spawn] -= 1 * TimeMultiplier;
+			if (Attacking[Spawn] <= 0)
+			{
+				AttackTimer[Spawn] = 225 * TimeMultiplier, attackchoice[Spawn] = 0, EnemyAttackFrame[Spawn] = 0;
+			}
 		}
 	}
 

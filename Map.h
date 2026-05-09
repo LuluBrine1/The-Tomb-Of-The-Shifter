@@ -5,7 +5,7 @@ namespace Tmpl8
 	bool Rockbiome();
 	bool Bossroom();
 	bool Collision(float x, float y, float charx, float chary);
-	bool CheckBoundary(int x, int y);
+	bool CheckBoundary(float x, float y);
 
 	void CreateTile(int x, int y);
 	void ClearMap();

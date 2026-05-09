@@ -56,7 +56,7 @@ namespace Tmpl8
 	Surface* menu = new Surface("assets/menu-screen.png");
 
 	TileMap Level;
-	Firearm weapon{ 0 };
+	Firearm weapon;
 
 	//hitboxes for the player character. the character never moves so these are important values
 	const int leftx = 391, rightx = 408, centrex = 400, centrey = 256;
@@ -208,7 +208,7 @@ namespace Tmpl8
 		charx = 32;
 		chary = -1056;
 		guntype = pistol;
-		Firearm weapon{ 0 };
+		Firearm weapon;
 		PickElement = false;
 		Element = 0;
 		RoomsCleared = 0;
@@ -515,9 +515,14 @@ namespace Tmpl8
 						break;
 
 					}
-					if (Level.SelectUpgrade(selection) < 100) 
+
+					if (Level.SelectUpgrade(selection) < 10) 
 					{
-						Firearm weapon{ guntype };
+						weapon.change(guntype);
+					}
+					else if (Level.SelectUpgrade(selection) < 100)
+					{
+						weapon.evolve(guntype);
 					}
 				
 					//game back to main run
@@ -587,7 +592,7 @@ namespace Tmpl8
 		if (space)
 		{
 			if (Collision(leftx, bottomy + 1, charx, chary) || Collision(rightx, bottomy + 1, charx, chary) || jumps > 0) //you can only jump if youre on the floor or have more jumps
-				gravity = 4.7, jumps -= 1, space = 0;
+				gravity = 5.2, jumps -= 1, space = 0;
 		}
 
 		if (!space)
@@ -597,7 +602,7 @@ namespace Tmpl8
 		}
 
 		chary += (gravity * TimeMultiplier);
-		gravity -= (0.1 * TimeMultiplier);
+		gravity -= static_cast<float>(0.1 * TimeMultiplier);
 
 		//facing direction independent of moving direction direction so you can shoot whichever direction while moving
 		if (mousex < centrex)
@@ -766,7 +771,7 @@ namespace Tmpl8
 
 			if (Rkey)
 			{
-				ManualReload();
+				weapon.ManualReload();
 			}
 
 
@@ -780,7 +785,7 @@ namespace Tmpl8
 			EnemyAction(screen, charx, chary, TimeMultiplier);
 			ProjectileAction(screen, charx, chary, TimeMultiplier);
 			weapon.reload(screen, TimeMultiplier);
-			weapon.Fire(screen, mousex, leftmouse, closestwallx, left, right, charx, chary, TimeMultiplier);
+			weapon.Fire(screen, mousex, leftmouse, closestwallx, charx, chary, TimeMultiplier);
 			enemies = EnemyCount(screen);
 
 
