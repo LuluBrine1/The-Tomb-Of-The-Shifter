@@ -14,6 +14,7 @@ namespace Tmpl8
 	void EnemyAttack(float charx, float chary, int Spawn, float TimeMultiplier);
 	void BossAttack(float charx, float chary, int Spawn, float TimeMultiplier);
 
+
 	void ProjectileAction(Surface* screen, float charx, float chary, float TimeMultiplier);
 	void ProjectileMovement(int Number, float TimeMultiplier);
 	void CheckProjectileDamage(Surface* screen, float charx, float chary, int Number, float TimeMultiplier);

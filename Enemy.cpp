@@ -15,8 +15,27 @@ namespace Tmpl8
 	bool BossRoom = false;
 	int Space = 0;
 
+	enum ENEMY
+	{
+		none = 0,
+		skully = 11,
+		cactus = 12,
+		worm = 21,
+		spitter = 22,
+		scorpion = 31,
+		armadillo = 32,
+		bat = 101,
+		spider = 102,
+		skull = 201,
+		raider = 202,
+		boulder = 301,
+		necromancer = 302,
+		undead = 500,
+		shifter = 999
+	};
+	ENEMY Enemies[124] = {none};
+
 	//enemy basic variables
-	int Enemies[124] = { 0 };
 	int EnemyHp[124] = { 0 };
 	float EnemyX[124] = { 0 };
 	float EnemyY[124] = { 0 };
@@ -116,7 +135,33 @@ namespace Tmpl8
 	Sprite Undead(new Surface("assets/Enemies/Undead.png"), 6);
 	Sprite Frozen(new Surface("assets/Frozen.png"), 1);
 
+	bool BottomCollision(float Offset, int Spawn)
+	{
+		return (Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + Offset, 0, 0)
+			|| Collision(EnemyX[Spawn] + Xoffset[Spawn] + (Width[Spawn] / 2), EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + Offset, 0, 0)
+			|| Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + Offset, 0, 0));
+	}
 
+	bool TopCollision(float Offset, int Spawn)
+	{
+		return (Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Offset, 0, 0)
+			|| Collision(EnemyX[Spawn] + Xoffset[Spawn] + (Width[Spawn] / 2), EnemyY[Spawn] + Yoffset[Spawn] + Offset, 0, 0)
+			|| Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Offset, 0, 0));
+	}
+
+	bool LeftCollision(float Offset, int Spawn)
+	{
+		return (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Offset, EnemyY[Spawn] + Yoffset[Spawn], 0, 0)
+			|| Collision(EnemyX[Spawn] + Xoffset[Spawn] + Offset, EnemyY[Spawn] + Yoffset[Spawn] + (Height[Spawn] / 2), 0, 0)
+			|| Collision(EnemyX[Spawn] + Xoffset[Spawn] + Offset, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0));
+	}
+
+	bool RightCollision(float Offset, int Spawn)
+	{
+		return (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + Offset, EnemyY[Spawn] + Yoffset[Spawn], 0, 0)
+			|| Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + Offset, EnemyY[Spawn] + Yoffset[Spawn] + (Height[Spawn] / 2), 0, 0)
+			|| Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + Offset, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0));
+	}
 
 
 	Enemy::Enemy(int type, bool RockBiome, int RoomsCleared)
@@ -130,7 +175,7 @@ namespace Tmpl8
 		int EnemyType = 0;
 
 		Spawn = 0;
-		while (Enemies[Spawn] != 0 && Spawn < 124)
+		while (Enemies[Spawn] != none && Spawn < 124)
 		{
 			Spawn += 1;
 		}
@@ -138,95 +183,142 @@ namespace Tmpl8
 		//gives each enemy their values
 		if (type == 1) //brittle enemies
 		{
-			if (RockBiome == false)
+			if (!RockBiome)
 			{
 				EnemyType = sand(opponent) + 10;
 				SetHp = 6 + (RoomsCleared); //each enemy scales with rooms cleared to add some sort of extra difficulty to each room
 				if (EnemyType == 11) 
 				{ 
-					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 17, Height[Spawn] = 21, grounded[Spawn] = false, EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 2, MovementFrames[Spawn] = 1, EnemyLeftFrame[Spawn] = 2, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 4, ElementResistance[Spawn] = -1;
+					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 17, Height[Spawn] = 21, grounded[Spawn] = false;
+					EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 2;
+					MovementFrames[Spawn] = 1, EnemyLeftFrame[Spawn] = 2, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 4;
+					ElementResistance[Spawn] = -1;
+					Enemies[Spawn] = skully;
 				}
 				else if (EnemyType == 12)
 				{
-					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 13, Height[Spawn] = 20, grounded[Spawn] = true, EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 2, MovementFrames[Spawn] = 1, EnemyLeftFrame[Spawn] = 4, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 8, ElementResistance[Spawn] = -1;
+					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 13, Height[Spawn] = 20, grounded[Spawn] = true;
+					EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 2;
+					MovementFrames[Spawn] = 1, EnemyLeftFrame[Spawn] = 4, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 8;
+					ElementResistance[Spawn] = -1;
+					Enemies[Spawn] = cactus;
 				}
 			}
-			else if (RockBiome == true)
+			else if (RockBiome)
 			{
 				EnemyType = rock(opponent) + 100;
 				SetHp = 20 + (RoomsCleared); //each enemy type (brittle, normal, tank) have the same scaling
 				if (EnemyType == 101) //the bat is immune to the ice element
 				{
-					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 15, Height[Spawn] = 16, grounded[Spawn] = false, EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 2, MovementFrames[Spawn] = 1, EnemyLeftFrame[Spawn] = 2, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 4, ElementResistance[Spawn] = 2;
+					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 15, Height[Spawn] = 16, grounded[Spawn] = false;
+					EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 2;
+					MovementFrames[Spawn] = 1, EnemyLeftFrame[Spawn] = 2, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 4;
+					ElementResistance[Spawn] = 2;
+					Enemies[Spawn] = bat;
 				}
 				else if (EnemyType == 102)
 				{
-					Xoffset[Spawn] = 6, Yoffset[Spawn] = 10, Width[Spawn] = 19, Height[Spawn] = 21, grounded[Spawn] = true, EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 3, MovementFrames[Spawn] = 3, EnemyLeftFrame[Spawn] = 4, RepeatingStartFrame[Spawn] = 1, RepeatingEndFrame[Spawn] = 3, FrameCount[Spawn] = 8, ElementResistance[Spawn] = -1;
+					Xoffset[Spawn] = 6, Yoffset[Spawn] = 10, Width[Spawn] = 19, Height[Spawn] = 21, grounded[Spawn] = true;
+					EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 3;
+					MovementFrames[Spawn] = 3, EnemyLeftFrame[Spawn] = 4, RepeatingStartFrame[Spawn] = 1, RepeatingEndFrame[Spawn] = 3, FrameCount[Spawn] = 8;
+					ElementResistance[Spawn] = -1;
+					Enemies[Spawn] = spider;
 				}
 			}
 		}
 		else if (type == 2) //normal enemies
 		{
-			if (RockBiome == false)
+			if (!RockBiome)
 			{
 				EnemyType = sand(opponent) + 20;
 				SetHp = 12 + (RoomsCleared * 2);
 				if (EnemyType == 21) 
 				{ 
-					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 63, Height[Spawn] = 20, grounded[Spawn] = true, EnemyDamage[Spawn] = 2, EnemySpeed[Spawn] = 3, MovementFrames[Spawn] = 9, EnemyLeftFrame[Spawn] = 11, RepeatingStartFrame[Spawn] = 5, RepeatingEndFrame[Spawn] = 8, FrameCount[Spawn] = 21, ElementResistance[Spawn] = -1;
+					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 63, Height[Spawn] = 20, grounded[Spawn] = true;
+					EnemyDamage[Spawn] = 2, EnemySpeed[Spawn] = 3;
+					MovementFrames[Spawn] = 9, EnemyLeftFrame[Spawn] = 11, RepeatingStartFrame[Spawn] = 5, RepeatingEndFrame[Spawn] = 8, FrameCount[Spawn] = 21;
+					ElementResistance[Spawn] = -1;
+					Enemies[Spawn] = worm;
 				}
 				else if (EnemyType == 22)
 				{
-					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 13, Height[Spawn] = 10, grounded[Spawn] = false, EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 2, MovementFrames[Spawn] = 4, EnemyLeftFrame[Spawn] = 9, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 3, FrameCount[Spawn] = 18, ElementResistance[Spawn] = -1;
+					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 13, Height[Spawn] = 10, grounded[Spawn] = false;
+					EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 2;
+					MovementFrames[Spawn] = 4, EnemyLeftFrame[Spawn] = 9, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 3, FrameCount[Spawn] = 18;
+					ElementResistance[Spawn] = -1;
+					Enemies[Spawn] = spitter;
 				}
 			}
-			else if (RockBiome == true)
+			else if (RockBiome)
 			{
 				EnemyType = rock(opponent) + 200;
 				SetHp = 20 + (RoomsCleared * 2);
 				if (EnemyType == 201)
 				{
-					Xoffset[Spawn] = 7, Yoffset[Spawn] = 0, Width[Spawn] = 25, Height[Spawn] = 29, grounded[Spawn] = false, EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 1, MovementFrames[Spawn] = 1, EnemyLeftFrame[Spawn] = 5, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 10, ElementResistance[Spawn] = -1;
+					Xoffset[Spawn] = 7, Yoffset[Spawn] = 0, Width[Spawn] = 25, Height[Spawn] = 29, grounded[Spawn] = false;
+					EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 1;
+					MovementFrames[Spawn] = 1, EnemyLeftFrame[Spawn] = 5, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 10;
+					ElementResistance[Spawn] = -1;
+					Enemies[Spawn] = skull;
 				}
 				else if (EnemyType == 202)
 				{
-					Xoffset[Spawn] = 7, Yoffset[Spawn] = 0, Width[Spawn] = 17, Height[Spawn] = 31, grounded[Spawn] = true, EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 1, MovementFrames[Spawn] = 3, EnemyLeftFrame[Spawn] = 3, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 6, ElementResistance[Spawn] = -1;
+					Xoffset[Spawn] = 7, Yoffset[Spawn] = 0, Width[Spawn] = 17, Height[Spawn] = 31, grounded[Spawn] = true;
+					EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 1;
+					MovementFrames[Spawn] = 3, EnemyLeftFrame[Spawn] = 3, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 6;
+					ElementResistance[Spawn] = -1;
+					Enemies[Spawn] = raider;
 				}
 			}
 		}
 		else if (type == 3) //tank enemies
 		{
-			if (RockBiome == false)
+			if (!RockBiome)
 			{
 				EnemyType = sand(opponent) + 30;
 				SetHp = 20 + (RoomsCleared * 4);
 				if (EnemyType == 31) 
 				{ 
-					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 37, Height[Spawn] = 31, grounded[Spawn] = true, EnemyDamage[Spawn] = 2, EnemySpeed[Spawn] = 1, MovementFrames[Spawn] = 2, EnemyLeftFrame[Spawn] = 20, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 40, ElementResistance[Spawn] = -1;
+					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 37, Height[Spawn] = 31, grounded[Spawn] = true;
+					EnemyDamage[Spawn] = 2, EnemySpeed[Spawn] = 1;
+					MovementFrames[Spawn] = 2, EnemyLeftFrame[Spawn] = 20, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 40;
+					ElementResistance[Spawn] = -1;
+					Enemies[Spawn] = scorpion;
 				}
 				else if (EnemyType == 32)
 				{ 
-					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 31, Height[Spawn] = 16, grounded[Spawn] = true, EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 3, MovementFrames[Spawn] = 2, EnemyLeftFrame[Spawn] = 13, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 26, ElementResistance[Spawn] = -1;
+					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 31, Height[Spawn] = 16, grounded[Spawn] = true;
+					EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 3;
+					MovementFrames[Spawn] = 2, EnemyLeftFrame[Spawn] = 13, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 26;
+					ElementResistance[Spawn] = -1;
+					Enemies[Spawn] = armadillo;
 				}
 			}
-			else if (RockBiome == true)
+			else if (RockBiome)
 			{
 				EnemyType = rock(opponent) + 300;
 				SetHp = 40 + (RoomsCleared * 4);
 				if (EnemyType == 301) //the boulder is immune to the fire element
 				{
-					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 47, Height[Spawn] = 47, grounded[Spawn] = true, EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 2, MovementFrames[Spawn] = 8, EnemyLeftFrame[Spawn] = 8, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 7, FrameCount[Spawn] = 16, ElementResistance[Spawn] = 1;
+					Xoffset[Spawn] = 0, Yoffset[Spawn] = 0, Width[Spawn] = 47, Height[Spawn] = 47, grounded[Spawn] = true;
+					EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 2;
+					MovementFrames[Spawn] = 8, EnemyLeftFrame[Spawn] = 8, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 7, FrameCount[Spawn] = 16;
+					ElementResistance[Spawn] = 1;
+					Enemies[Spawn] = boulder;
 				}
 				else if (EnemyType == 302)
 				{
-					Xoffset[Spawn] = 8, Yoffset[Spawn] = 0, Width[Spawn] = 15, Height[Spawn] = 31, grounded[Spawn] = true, EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 1, MovementFrames[Spawn] = 1, EnemyLeftFrame[Spawn] = 6, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 12, ElementResistance[Spawn] = -1;
+					Xoffset[Spawn] = 8, Yoffset[Spawn] = 0, Width[Spawn] = 15, Height[Spawn] = 31, grounded[Spawn] = true;
+					EnemyDamage[Spawn] = 1, EnemySpeed[Spawn] = 1;
+					MovementFrames[Spawn] = 1, EnemyLeftFrame[Spawn] = 6, RepeatingStartFrame[Spawn] = 0, RepeatingEndFrame[Spawn] = 0, FrameCount[Spawn] = 12;
+					ElementResistance[Spawn] = -1;
+					Enemies[Spawn] = necromancer;
 				}
 			}
 		}
 
 		EnemyFrame[Spawn] = 0;
 		MoveFrame[Spawn] = true;
-		Enemies[Spawn] = EnemyType;
 		EnemyHp[Spawn] = SetHp;
 
 
@@ -235,18 +327,7 @@ namespace Tmpl8
 		
 		EnemyX[Spawn] = (float)MapWidth(Map);
 		EnemyY[Spawn] = (float)MapHeight(Map); //randomizes the spawn location for the enemy
-		while //repeats until the enemy doesnt spawn in a wall or in the air as a grounded enemy
-			(
-			Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == true ||
-			Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true ||
-			Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == true ||
-			Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true ||
-			Collision(EnemyX[Spawn] + Xoffset[Spawn] + (Width[Spawn]/2), EnemyY[Spawn] + Yoffset[Spawn] + (Height[Spawn]/2), 0, 0) == true ||
-			(grounded[Spawn] == true &&
-				(Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false || 
-					Collision(EnemyX[Spawn] + Xoffset[Spawn] + (Width[Spawn]/2), EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false ||
-			Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false))
-			)
+		while ( TopCollision(0, Spawn) || BottomCollision(0, Spawn) || (grounded[Spawn] && !BottomCollision(1, Spawn)))//repeats until the enemy doesnt spawn in a wall or in the air as a grounded enemy
 		{
 			EnemyX[Spawn] = (float)MapWidth(Map);
 			EnemyY[Spawn] = (float)MapHeight(Map);
@@ -261,7 +342,7 @@ namespace Tmpl8
 	void CreateEnemy(int type, float x, float y) //when the enemy that isspawning isnt random, aka undead or the boss, who have a set spawn location aswell
 	{
 		Spawn = 0;
-		while (Enemies[Spawn] != 0 && Spawn < 124)
+		while (Enemies[Spawn] != none && Spawn < 124)
 		{
 			Spawn += 1;
 		}
@@ -270,7 +351,7 @@ namespace Tmpl8
 
 		if (type == 500) 
 		{
-			Enemies[Spawn] = 500;
+			Enemies[Spawn] = undead;
 			EnemyHp[Spawn] = 1;
 			Xoffset[Spawn] = 6;
 			Yoffset[Spawn] = 0;
@@ -293,7 +374,7 @@ namespace Tmpl8
 
 		if (type == 999)
 		{
-			Enemies[Spawn] = 999;
+			Enemies[Spawn] = shifter;
 			EnemyHp[Spawn] = 1000;
 			Xoffset[Spawn] = 12;
 			Yoffset[Spawn] = 0;
@@ -386,15 +467,15 @@ namespace Tmpl8
 	void Enemy::Draw(Surface* screen, float charx, float chary, int Spawn)
 	{
 		//draws the enemies if they are alive, falling is false so that enemies that are falling disappear off the screen
-		if (HasSpawned[Spawn] == true && EnemyHp[Spawn] > 0 && (EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + chary < 512 || Falling[Spawn] == false))
+		if (HasSpawned[Spawn] && EnemyHp[Spawn] > 0 && (EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + chary < 512 || !Falling[Spawn]))
 		{
 			if (Enemies[Spawn] > 500) //boss has set frames
 				EnemyFrame[Spawn] = EnemyAttackFrame[Spawn];
-			else if (RepeatingEndFrame[Spawn] > 0 && EnemyFrame[Spawn] - EnemyLeft[Spawn] <= RepeatingEndFrame[Spawn] && EnemyFrame[Spawn] - EnemyLeft[Spawn] >= RepeatingStartFrame[Spawn] && moving[Spawn] == true) //roll through movement sprites if there is a repetitive movement
+			else if (RepeatingEndFrame[Spawn] > 0 && EnemyFrame[Spawn] - EnemyLeft[Spawn] <= RepeatingEndFrame[Spawn] && EnemyFrame[Spawn] - EnemyLeft[Spawn] >= RepeatingStartFrame[Spawn] && moving[Spawn]) //roll through movement sprites if there is a repetitive movement
 				EnemyFrame[Spawn] = EnemyLeft[Spawn] + (EnemyMoveFrame[Spawn] % (RepeatingEndFrame[Spawn] - RepeatingStartFrame[Spawn])) + RepeatingStartFrame[Spawn] + EnemyAttackFrame[Spawn];
-			else if (MoveFrame[Spawn] == false && ForcedDirection[Spawn] == 0) //if they cant move, such as scorpion or cactus attacks
+			else if (!MoveFrame[Spawn] && ForcedDirection[Spawn] == 0) //if they cant move, such as scorpion or cactus attacks
 				EnemyFrame[Spawn] = EnemyLeft[Spawn] + EnemyAttackFrame[Spawn];
-			else if (MoveFrame[Spawn] == false && ForcedDirection[Spawn] != 0) //if theyre stuck to a directon
+			else if (!MoveFrame[Spawn] && ForcedDirection[Spawn] != 0) //if theyre stuck to a directon
 				EnemyFrame[Spawn] = EnemyAttackFrame[Spawn];
 			else //when they dont have repeating move frames
 				EnemyFrame[Spawn] = EnemyLeft[Spawn] + (EnemyMoveFrame[Spawn] % MovementFrames[Spawn]) + EnemyAttackFrame[Spawn];
@@ -404,23 +485,64 @@ namespace Tmpl8
 			if (EnemyFrame[Spawn] >= FrameCount[Spawn]) { EnemyFrame[Spawn] = FrameCount[Spawn] - 1; }
 
 			//drawing based off enemy type
-			if (Enemies[Spawn] == 11) { BrittleSkull.SetFrame(EnemyFrame[Spawn]), BrittleSkull.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
-			else if (Enemies[Spawn] == 12) { BrittleCactus.SetFrame(EnemyFrame[Spawn]), BrittleCactus.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
-			else if (Enemies[Spawn] == 21) { NormalWorm.SetFrame(EnemyFrame[Spawn]), NormalWorm.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
-			else if (Enemies[Spawn] == 22) { NormalSpitter.SetFrame(EnemyFrame[Spawn]), NormalSpitter.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
-			else if (Enemies[Spawn] == 31) { TankScorpion.SetFrame(EnemyFrame[Spawn]), TankScorpion.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
-			else if (Enemies[Spawn] == 32) { TankArmadillo.SetFrame(EnemyFrame[Spawn]), TankArmadillo.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
+			switch (Enemies[Spawn])
+			{
+			case skully:
+				BrittleSkull.SetFrame(EnemyFrame[Spawn]), BrittleSkull.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary));
+				break;
 
-			else if (Enemies[Spawn] == 101) { BrittleBat.SetFrame(EnemyFrame[Spawn]), BrittleBat.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
-			else if (Enemies[Spawn] == 102) { BrittleSpider.SetFrame(EnemyFrame[Spawn]), BrittleSpider.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
-			else if (Enemies[Spawn] == 201) { NormalSkull.SetFrame(EnemyFrame[Spawn]), NormalSkull.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
-			else if (Enemies[Spawn] == 202) { NormalRaider.SetFrame(EnemyFrame[Spawn]), NormalRaider.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
-			else if (Enemies[Spawn] == 301) { TankBoulder.SetFrame(EnemyFrame[Spawn]), TankBoulder.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
-			else if (Enemies[Spawn] == 302) { TankNecromancer.SetFrame(EnemyFrame[Spawn]), TankNecromancer.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
+			case cactus:
+				BrittleCactus.SetFrame(EnemyFrame[Spawn]), BrittleCactus.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary));
+				break;
 
-			else if (Enemies[Spawn] == 500) { Undead.SetFrame(EnemyFrame[Spawn]), Undead.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
+			case worm:
+				NormalWorm.SetFrame(EnemyFrame[Spawn]), NormalWorm.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary));
+				break;
 
-			else if (Enemies[Spawn] == 999) { Boss.SetFrame(EnemyFrame[Spawn]), Boss.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary)); }
+			case spitter:
+				NormalSpitter.SetFrame(EnemyFrame[Spawn]), NormalSpitter.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary));
+				break;
+
+			case scorpion:
+				TankScorpion.SetFrame(EnemyFrame[Spawn]), TankScorpion.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary));
+				break;
+
+			case armadillo:
+				TankArmadillo.SetFrame(EnemyFrame[Spawn]), TankArmadillo.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary));
+				break;
+
+			case bat:
+				BrittleBat.SetFrame(EnemyFrame[Spawn]), BrittleBat.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary));
+				break;
+
+			case spider:
+				BrittleSpider.SetFrame(EnemyFrame[Spawn]), BrittleSpider.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary));
+				break;
+
+			case skull:
+				NormalSkull.SetFrame(EnemyFrame[Spawn]), NormalSkull.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary));
+				break;
+
+			case raider:
+				NormalRaider.SetFrame(EnemyFrame[Spawn]), NormalRaider.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary));
+				break;
+
+			case boulder:
+				TankBoulder.SetFrame(EnemyFrame[Spawn]), TankBoulder.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary));
+				break;
+
+			case necromancer:
+				TankNecromancer.SetFrame(EnemyFrame[Spawn]), TankNecromancer.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary));
+				break;
+
+			case undead:
+				Undead.SetFrame(EnemyFrame[Spawn]), Undead.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary));
+				break;
+
+			case shifter:
+				Boss.SetFrame(EnemyFrame[Spawn]), Boss.Draw(screen, static_cast<int>(EnemyX[Spawn] - charx), static_cast<int>(EnemyY[Spawn] + chary));
+				break;
+			};
 
 			//if enemy is frozen
 			if (FreezeTimer[Spawn] > 0)
@@ -446,7 +568,7 @@ namespace Tmpl8
 			Attack1.SetFrame(0), Attack1.Draw(screen, static_cast<int>(ProjectileX[Number] - charx), static_cast<int>(ProjectileY[Number] + chary));
 
 			float TempY = 39;
-			while (Collision(ProjectileX[Number], TempY * 32, 0, 0) == true) { TempY -= 1; }
+			while (Collision(ProjectileX[Number], TempY * 32, 0, 0)) { TempY -= 1; }
 
 			Attack1.SetFrame(1), Attack1.Draw(screen, static_cast<int>(ProjectileX[Number] - charx), static_cast<int>(TempY*32 + chary)); //creates a warning block at the landing position
 		}
@@ -476,7 +598,7 @@ namespace Tmpl8
 		
 		for (int i = 0; i < 124; i++) //resets all values
 		{
-			Enemies[i] = { 0 };
+			Enemies[i] = { none };
 			EnemyHp[i] = { 0 };
 			EnemyX[i] = { 0 };
 			EnemyY[i] = { 0 };
@@ -502,7 +624,7 @@ namespace Tmpl8
 		Spawn = 0;
 
 
-		if (BossRoom == false)
+		if (!BossRoom)
 		{
 
 			int Brittle = 0, Normal = 0, Tank = 0, TotalEnemies = 0;
@@ -617,7 +739,7 @@ namespace Tmpl8
 			}
 			printf("loaded all\n");
 		}
-		if (BossRoom == true)
+		if (BossRoom)
 		{
 			CreateEnemy(999, 29 * 32 + 5, 39 * 32 + 2);
 		}
@@ -746,7 +868,7 @@ namespace Tmpl8
 			}
 		}
 
-		if (touchingplayer == true)
+		if (touchingplayer)
 		{
 			for (int j = 0; j < 32; j++)
 			{
@@ -754,7 +876,7 @@ namespace Tmpl8
 				{
 					int colour = screen->GetBuffer()[(391 + i) + (240 + j) * 800];
 
-					if (colour == -4841697 && hurt == false) //damage dealing colour. i dont know why its negative but i found this value by creating
+					if (colour == -4841697 && !hurt)         //damage dealing colour. i dont know why its negative but i found this value by creating
 					{                                        //a pure (damage dealing colour) 32x32 enemy, then printing the colour value of (391, 240)
 						hp -= EnemyDamage[Spawn];            //which is the top left of my main character, which gave me this value
 						Iframes = 50 * TimeMultiplier;
@@ -778,7 +900,7 @@ namespace Tmpl8
 			for (int i = 0; i < ProjectileWidth[Number]; i++)
 			{
 				//projectiles also have the damage dealing colour but its used more as an indicator because a projectile will deal a constant amount of damage, so projectiles that dont deal damage will just be 0
-				if ((ScreenX + i < 409) && (ScreenX + i > 391) && (ScreenY + j < 272) && (ScreenY + j) > 240 && hurt == false && ProjectileDamage[Number] > 0)
+				if ((ScreenX + i < 409) && (ScreenX + i > 391) && (ScreenY + j < 272) && (ScreenY + j) > 240 && !hurt && ProjectileDamage[Number] > 0)
 				{ 
 					hp -= ProjectileDamage[Number];
 					Iframes = 50 * TimeMultiplier;
@@ -875,12 +997,7 @@ namespace Tmpl8
 
 	bool CheckDeath()
 	{
-		if (hp < 1)
-		{
-			return true;
-		}
-		else
-			return false;
+		return hp < 1;
 	}
 
 	int EnemyCount(Surface* screen)
@@ -889,7 +1006,7 @@ namespace Tmpl8
 
 		for (int i = 0; i < 124; i++)
 		{
-			if (HasSpawned[i] == true)
+			if (HasSpawned[i])
 			{
 				if (EnemyHp[i] < 1)
 				{
@@ -903,7 +1020,7 @@ namespace Tmpl8
 		}
 		//prints enemy count, colour changes based off biome so its more readable
 		std::string EnemiesRemaining = "Enemies Remaining:" + std::to_string(EnemySpawned);
-		if (Rockbiome() == false)
+		if (!Rockbiome())
 			screen->Print(EnemiesRemaining.c_str(), 50, 20, 0x888888);
 		else
 			screen->Print(EnemiesRemaining.c_str(), 50, 20, 0xccc324);
@@ -911,7 +1028,7 @@ namespace Tmpl8
 		if (EnemySpawned == 0)
 		{
 			std::string ExitTheRoom = "Claim your treasure and Exit the room!";
-			if (Rockbiome() == false)
+			if (!Rockbiome())
 				screen->Print(ExitTheRoom.c_str(), 50, 40, 0x888888);
 			else
 				screen->Print(ExitTheRoom.c_str(), 50, 40, 0xccc324);
@@ -941,23 +1058,23 @@ namespace Tmpl8
 					Below = true;
 			}
 
-			if (OnScreen == true && Static[Spawn] == false && ForcedDirection[Spawn] == 0 && MoveTimer[Spawn] <= 0) //if the enemy is free to move
+			if (OnScreen && !Static[Spawn] && ForcedDirection[Spawn] == 0 && MoveTimer[Spawn] <= 0) //if the enemy is free to move
 			{
-				if (Below == true && grounded[Spawn] == true && Falling[Spawn] == false)
+				if (Below && grounded[Spawn] && !Falling[Spawn])
 				{
 					//grounded enemies can climb up one tile if the tile infront is a block and above and above infront is air
-					if (Left == true)
+					if (Left)
 					{
-						if (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] - 32, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] - 32, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] - 32, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] - 32, 0, 0) == false)
+						if (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) && !Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] - 32, 0, 0) && !Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] - 32, 0, 0))
 						{
 							Climbing[Spawn] = true;
 						}
 						else
 							Climbing[Spawn] = false;
 					}
-					if (Right == true)
+					if (Right)
 					{
-						if (Collision(EnemyX[Spawn] + Xoffset[Spawn] - 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true && Collision(EnemyX[Spawn] + Xoffset[Spawn] - 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] - 32, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] - 32, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] - 32, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] - 32, 0, 0) == false)
+						if (Collision(EnemyX[Spawn] + Xoffset[Spawn] - 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0 ) && !Collision(EnemyX[Spawn] + Xoffset[Spawn] - 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] - 32, 0, 0) && !Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] - 32, 0, 0))
 						{
 							Climbing[Spawn] = true;
 						}
@@ -965,40 +1082,40 @@ namespace Tmpl8
 							Climbing[Spawn] = false;
 					}
 
-					if (Climbing[Spawn] == true)
+					if (Climbing[Spawn])
 						EnemyY[Spawn] -= (EnemySpeed[Spawn] * TimeMultiplier);
 				}
 
-				if (Above == true && grounded[Spawn] == true)
+				if (Above && grounded[Spawn])
 				{
 					Climbing[Spawn] = false;
 				}
 
 				//regular movement
-				if (Left == true)
+				if (Left)
 				{
-					if (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + EnemySpeed[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + EnemySpeed[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == false)
+					if (!RightCollision(EnemySpeed[Spawn], Spawn))
 					{
 						EnemyX[Spawn] += EnemySpeed[Spawn] * TimeMultiplier;
 						EnemyMoveFrame[Spawn] += 1;
 						EnemyLeft[Spawn] = EnemyLeftFrame[Spawn];
 						moving[Spawn] = true;
 					}
-					else if (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + 1, EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == false)
+					else if (!RightCollision(1, Spawn))
 						EnemyX[Spawn] += 1, moving[Spawn] = true;
 					else
 						moving[Spawn] = false;
 				}
-				if (Right == true)
+				if (Right)
 				{
-					if (Collision(EnemyX[Spawn] + Xoffset[Spawn] - EnemySpeed[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] - EnemySpeed[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == false)
+					if (!LeftCollision(-EnemySpeed[Spawn], Spawn))
 					{
 						EnemyX[Spawn] -= EnemySpeed[Spawn] * TimeMultiplier;
 						EnemyMoveFrame[Spawn] += 1;
 						EnemyLeft[Spawn] = 0;
 						moving[Spawn] = true;
 					}
-					else if (Collision(EnemyX[Spawn] + Xoffset[Spawn] - 1, EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] - 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == false)
+					else if (!LeftCollision(-1, Spawn))
 						EnemyX[Spawn] -= 1, moving[Spawn] = true;
 					else
 					{
@@ -1010,10 +1127,10 @@ namespace Tmpl8
 				//floating enemies float. if they go up/down into a block, prevent them from doing so
 				//i had an issue where floating enemies would somehow spawn inside a block and float into infinity (only in the rock biome for some reason)
 				//and hence the coordinate fix to the center of the map if they attempt to escape
-				if (Above == true && grounded[Spawn] == false)
+				if (Above && !grounded[Spawn])
 				{
 					EnemyY[Spawn] += EnemySpeed[Spawn] * TimeMultiplier;
-					while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true)
+					while (BottomCollision(0, Spawn))
 					{
 						EnemyY[Spawn] -= 1 * TimeMultiplier;
 						if (EnemyY[Spawn] / 32 < 6)
@@ -1023,10 +1140,10 @@ namespace Tmpl8
 						}
 					}
 				}
-				if (Below == true && grounded[Spawn] == false)
+				if (Below && !grounded[Spawn])
 				{
 					EnemyY[Spawn] -= EnemySpeed[Spawn] * TimeMultiplier;
-					while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == true)
+					while (TopCollision(0, Spawn))
 					{
 						EnemyY[Spawn] += 1 * TimeMultiplier;
 						if (EnemyY[Spawn] / 32 > 42)
@@ -1043,21 +1160,21 @@ namespace Tmpl8
 				MoveTimer[Spawn] = 4 * TimeMultiplier;
 			}
 
-			if (OnScreen == true && grounded[Spawn] == true && Climbing[Spawn] == true)
+			if (OnScreen && grounded[Spawn] && Climbing[Spawn])
 			{
-				if (Collision(EnemyX[Spawn] + Xoffset[Spawn] - 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == false)
+				if (!LeftCollision(-1, Spawn) && !RightCollision(1, Spawn))
 					Climbing[Spawn] = false;
 			}
 			//gravity
-			if (grounded[Spawn] == true && Climbing[Spawn] == false)
+			if (grounded[Spawn] && !Climbing[Spawn])
 			{
 
-				if (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false)
+				if (!BottomCollision(1, Spawn))
 				{
 					Falling[Spawn] = true;
 					EnemyY[Spawn] -= EnemyGravity[Spawn] * TimeMultiplier;
 					(EnemyGravity[Spawn]) -= static_cast<float>(0.1 * TimeMultiplier);
-					while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1 - (int)EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1 - (int)EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1 - (int)EnemyGravity[Spawn], 0, 0) == true)
+					while (BottomCollision(1 - (int)EnemyGravity[Spawn], Spawn))
 					{
 						(EnemyGravity[Spawn]) += static_cast<float>(0.1 * TimeMultiplier);
 					}
@@ -1068,12 +1185,10 @@ namespace Tmpl8
 					EnemyGravity[Spawn] = 0;
 				}
 
-				if ((Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 2, 0, 0) == true) || (Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 2, 0, 0) == true))
-					EnemyY[Spawn] += 1;
 			}
-			if (Falling[Spawn] == true)
+			if (Falling[Spawn])
 			{
-				while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] - 1 - (int)EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + Yoffset[Spawn] - 1 - (int)EnemyGravity[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] - 1 - (int)EnemyGravity[Spawn], 0, 0) == true)
+				while (TopCollision(1 - (int)EnemyGravity[Spawn], Spawn))
 				{
 					(EnemyGravity[Spawn]) -= static_cast<float>(0.1 * TimeMultiplier);
 				}
@@ -1081,58 +1196,58 @@ namespace Tmpl8
 
 
 			//some attacks force an enemy into one direction, 1 is to the right (+x) and -1 is to the left (-x). 5 is up and down
-			if (OnScreen == true && ForcedDirection[Spawn] == 1)
+			if (OnScreen && ForcedDirection[Spawn] == 1)
 			{
-				if (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + EnemySpeed[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + EnemySpeed[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == false)
+				if (!RightCollision(EnemySpeed[Spawn], Spawn))
 				{
 					EnemyX[Spawn] += EnemySpeed[Spawn] * TimeMultiplier;
 				}
-				else if (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + 1, EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == false)
+				else if (!RightCollision(1, Spawn))
 					EnemyX[Spawn] += 1;
 			}
-			if (OnScreen == true && ForcedDirection[Spawn] == -1)
+			if (OnScreen && ForcedDirection[Spawn] == -1)
 			{
-				if (Collision(EnemyX[Spawn] + Xoffset[Spawn] - EnemySpeed[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] - EnemySpeed[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == false)
+				if (!LeftCollision(-EnemySpeed[Spawn], Spawn))
 				{
 					EnemyX[Spawn] -= EnemySpeed[Spawn] * TimeMultiplier;
 				}
-				else if (Collision(EnemyX[Spawn] + Xoffset[Spawn] - 1, EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] - 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == false)
+				else if (!LeftCollision(-1, Spawn))
 					EnemyX[Spawn] -= 1;
 			}
-			if (OnScreen == true && ForcedDirection[Spawn] == 5)
+			if (OnScreen && ForcedDirection[Spawn] == 5)
 			{
-				if (Ylocation < 266 && grounded[Spawn] == false)
+				if (Ylocation < 266 && !grounded[Spawn])
 				{
 					EnemyY[Spawn] += EnemySpeed[Spawn] * TimeMultiplier;
-					while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true)
+					while (BottomCollision(0, Spawn))
 						EnemyY[Spawn] -= 1;
 				}
-				if (Ylocation > 260 && grounded[Spawn] == false)
+				if (Ylocation > 260 && !grounded[Spawn])
 				{
 					EnemyY[Spawn] -= EnemySpeed[Spawn] * TimeMultiplier;
-					while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == true)
+					while (TopCollision(0, Spawn))
 						EnemyY[Spawn] += 1;
 				}
-				if (Ylocation > 260 && grounded[Spawn] == true && Enemies[Spawn] != 21) //used for the spider, because forced directions are every frame, the spider climbs incredibly fast
+				if (Ylocation > 260 && grounded[Spawn] && Enemies[Spawn] != worm) //used for the spider, because forced directions are every frame, the spider climbs incredibly fast
 				{
 					EnemyY[Spawn] -= EnemySpeed[Spawn] * TimeMultiplier;
-					while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn], 0, 0) == true)
+					while (TopCollision(0, Spawn))
 						EnemyY[Spawn] += 1;
 				}
 
 
-				if (Enemies[Spawn] == 21) //Worm's burrowing mechanic
+				if (Enemies[Spawn] == worm) //Worm's burrowing mechanic
 				{
 					bool Air = false;
 					bool Boundary = false;
 					float BurrowY = EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn];
 					bool InGround = false;
 
-					while (Air == false && Boundary == false) //finds whether it can burrow through an object, which is only when air is below
+					while (!Air && !Boundary) //finds whether it can burrow through an object, which is only when air is below
 					{
-						if (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, BurrowY, 0, 0) == false)
+						if (!Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, BurrowY, 0, 0))
 						{
-							if (CheckBoundary(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, BurrowY) == true)
+							if (CheckBoundary(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, BurrowY))
 								Boundary = true;
 							else
 								Air = true;
@@ -1141,11 +1256,11 @@ namespace Tmpl8
 							BurrowY += 1;
 					}
 
-					if (Boundary == true) //escapes
+					if (Boundary) //escapes
 					{
 						MoveFrame[Spawn] = true, EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0;
 					}
-					if (Air == true)
+					if (Air)
 					{
 						Burrowing[Spawn] = true;
 						EnemyY[Spawn] += 1 * TimeMultiplier;
@@ -1158,14 +1273,14 @@ namespace Tmpl8
 						for (int j = 0; j < 64; j++)
 						{
 							InGround = Collision(EnemyX[Spawn] + Xoffset[Spawn] + (Width[Spawn] / 2) - 32 + j, EnemyY[Spawn] + i, 0, 0);
-							if (InGround == true)
+							if (InGround)
 								break;
 						}
-						if (InGround == true)
+						if (InGround)
 							break;
 					}
 
-					if (InGround == false)
+					if (!InGround)
 						MoveFrame[Spawn] = true, EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0;
 
 				}
@@ -1205,10 +1320,11 @@ namespace Tmpl8
 	void ProjectileMovement(int Number, float TimeMultiplier)
 	{
 		//projectile direction
-		if (ProjectileLeft[Number] == false) 
+		if (!ProjectileLeft[Number]) 
 		{ 
 			ProjectileX[Number] -= ProjectileSpeed[Number] * TimeMultiplier;
-			if (Collision(ProjectileX[Number] + ProjectileXoffset[Number] - ProjectileSpeed[Number], ProjectileY[Number] + ProjectileYoffset[Number], 0, 0) == true || Collision(ProjectileX[Number] + ProjectileXoffset[Number] - ProjectileSpeed[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number], 0, 0) == true)
+			if (Collision(ProjectileX[Number] + ProjectileXoffset[Number] - ProjectileSpeed[Number], ProjectileY[Number] + ProjectileYoffset[Number], 0, 0) 
+				|| Collision(ProjectileX[Number] + ProjectileXoffset[Number] - ProjectileSpeed[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number], 0, 0))
 			{
 				if (Bounces[Number] > 0)
 				{
@@ -1218,10 +1334,11 @@ namespace Tmpl8
 				else Lifetime[Number] = 0;
 			}
 		}
-		if (ProjectileLeft[Number] == true) 
+		if (ProjectileLeft[Number]) 
 		{ 
 			ProjectileX[Number] += ProjectileSpeed[Number] * TimeMultiplier;
-			if (Collision(ProjectileX[Number] + ProjectileXoffset[Number] + ProjectileWidth[Number] + ProjectileSpeed[Number], ProjectileY[Number] + ProjectileYoffset[Number], 0, 0) == true || Collision(ProjectileX[Number] + ProjectileXoffset[Number] + ProjectileWidth[Number] + ProjectileSpeed[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number], 0, 0) == true)
+			if (Collision(ProjectileX[Number] + ProjectileXoffset[Number] + ProjectileWidth[Number] + ProjectileSpeed[Number], ProjectileY[Number] + ProjectileYoffset[Number], 0, 0) 
+				|| Collision(ProjectileX[Number] + ProjectileXoffset[Number] + ProjectileWidth[Number] + ProjectileSpeed[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number], 0, 0))
 			{ 
 				if (Bounces[Number] != -1)
 				{
@@ -1234,12 +1351,13 @@ namespace Tmpl8
 		}
 
 		//gravity
-		if (GravitationalProjectile[Number] == true)
+		if (GravitationalProjectile[Number])
 		{
 			ProjectileY[Number] -= ProjectileGravity[Number] * TimeMultiplier;
 			ProjectileGravity[Number] -= static_cast<float>(0.05 * TimeMultiplier);
 
-			if (Collision(ProjectileX[Number] + ProjectileXoffset[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number] + 1, 0, 0) == true || Collision(ProjectileX[Number] + ProjectileXoffset[Number] + ProjectileWidth[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number] + 1, 0, 0) == true)
+			if (Collision(ProjectileX[Number] + ProjectileXoffset[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number] + 1, 0, 0) 
+				|| Collision(ProjectileX[Number] + ProjectileXoffset[Number] + ProjectileWidth[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number] + 1, 0, 0))
 			{
 				ProjectileGravity[Number] = 0;
 				if (Bounces[Number] == -1)
@@ -1248,7 +1366,8 @@ namespace Tmpl8
 				{
 					if (ProjectileGravity[Number] > 1) ProjectileGravity[Number] = static_cast<float>(ProjectileGravity[Number] * -0.8);
 					else ProjectileGravity[Number] += 1;
-					while (Collision(ProjectileX[Number] + ProjectileXoffset[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number], 0, 0) == true || Collision(ProjectileX[Number] + ProjectileXoffset[Number] + ProjectileWidth[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number], 0, 0) == true)
+					while (Collision(ProjectileX[Number] + ProjectileXoffset[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number], 0, 0) 
+						|| Collision(ProjectileX[Number] + ProjectileXoffset[Number] + ProjectileWidth[Number], ProjectileY[Number] + ProjectileYoffset[Number] + ProjectileHeight[Number], 0, 0))
 					{
 						ProjectileY[Number] -= 1;
 					}
@@ -1275,7 +1394,7 @@ namespace Tmpl8
 
 	void UpdateHitbox(int Spawn)
 	{
-		if (Enemies[Spawn] == 12)
+		if (Enemies[Spawn] == cactus)
 		{
 			if (EnemyFrame[Spawn] == 0 || EnemyFrame[Spawn] == 1 || EnemyFrame[Spawn] == 4 || EnemyFrame[Spawn] == 5)
 			{
@@ -1299,7 +1418,7 @@ namespace Tmpl8
 			{ Width[Spawn] = 21, Height[Spawn] = 13, Xoffset[Spawn] = 10, Yoffset[Spawn] = 0; }
 
 		}
-		if (Enemies[Spawn] == 21)
+		if (Enemies[Spawn] == worm)
 		{
 			if (EnemyFrame[Spawn] == 0 || EnemyFrame[Spawn] == 9 || EnemyFrame[Spawn] == 11 || EnemyFrame[Spawn] == 20) 
 			{ Width[Spawn] = 63, Height[Spawn] = 20, Xoffset[Spawn] = 0, Yoffset[Spawn] = 0; }
@@ -1326,7 +1445,7 @@ namespace Tmpl8
 			{ Width[Spawn] = 44, Height[Spawn] = 19, Xoffset[Spawn] = 19, Yoffset[Spawn] = 1; }
 
 		}
-		if (Enemies[Spawn] == 22)
+		if (Enemies[Spawn] == spitter)
 		{
 			if (EnemyFrame[Spawn] == 0 || EnemyFrame[Spawn] == 8)
 			{
@@ -1354,7 +1473,7 @@ namespace Tmpl8
 			}
 
 		}
-		if (Enemies[Spawn] == 31)
+		if (Enemies[Spawn] == scorpion)
 		{
 			if (EnemyFrame[Spawn] == 0 || EnemyFrame[Spawn] == 2 || EnemyFrame[Spawn] == 10 || EnemyFrame[Spawn] == 11 || EnemyFrame[Spawn] == 14 || EnemyFrame[Spawn] == 15 || EnemyFrame[Spawn] == 16 || EnemyFrame[Spawn] == 18 || EnemyFrame[Spawn] == 19 
 				|| EnemyFrame[Spawn] == 20 || EnemyFrame[Spawn] == 22 || EnemyFrame[Spawn] == 30 || EnemyFrame[Spawn] == 31 || EnemyFrame[Spawn] == 34 || EnemyFrame[Spawn] == 35 || EnemyFrame[Spawn] == 36 || EnemyFrame[Spawn] == 38 || EnemyFrame[Spawn] == 39)
@@ -1404,7 +1523,7 @@ namespace Tmpl8
 
 
 		}
-		if (Enemies[Spawn] == 32)
+		if (Enemies[Spawn] == armadillo)
 		{
 			if (EnemyFrame[Spawn] == 0 || EnemyFrame[Spawn] == 1 || EnemyFrame[Spawn] == 13 || EnemyFrame[Spawn] == 14)
 			{ Width[Spawn] = 31, Height[Spawn] = 17, Xoffset[Spawn] = 0, Yoffset[Spawn] = -1; }
@@ -1442,7 +1561,7 @@ namespace Tmpl8
 			else if (EnemyFrame[Spawn] == 22 || EnemyFrame[Spawn] == 23 || EnemyFrame[Spawn] == 24 || EnemyFrame[Spawn] == 25)
 			{ Width[Spawn] = 20, Height[Spawn] = 18, Xoffset[Spawn] = 4, Yoffset[Spawn] = 0; }
 		}
-		if (Enemies[Spawn] == 201)
+		if (Enemies[Spawn] == skull)
 		{
 			if (EnemyFrame[Spawn] == 0 || EnemyFrame[Spawn] == 5)
 			{
@@ -1469,7 +1588,7 @@ namespace Tmpl8
 				Height[Spawn] = 33;
 			}
 		}
-		if (Enemies[Spawn] == 302)
+		if (Enemies[Spawn] == necromancer)
 		{
 			if (EnemyFrame[Spawn] == 0 || EnemyFrame[Spawn] == 6)
 			{
@@ -1496,7 +1615,7 @@ namespace Tmpl8
 				Width[Spawn] = 21, Height[Spawn] = 31, Xoffset[Spawn] = 8, Yoffset[Spawn] = 0;
 			}
 		}
-		if (Enemies[Spawn] == 500)
+		if (Enemies[Spawn] == undead)
 		{
 			if (EnemyFrame[Spawn] == 0 || EnemyFrame[Spawn] == 1 || EnemyFrame[Spawn] == 2)
 			{
@@ -1508,7 +1627,7 @@ namespace Tmpl8
 			}
 		}
 
-		if (Enemies[Spawn] == 999)
+		if (Enemies[Spawn] == shifter)
 		{
 			if (EnemyFrame[Spawn] < 10)
 			{
@@ -1521,18 +1640,18 @@ namespace Tmpl8
 		}
 
 		//if the enemy hitbox change puts them in a wall, it lets them out
-		if ((Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true) && Burrowing[Spawn] == false)
+		if (BottomCollision(0, Spawn) && !Burrowing[Spawn])
 		{
 			EnemyY[Spawn] -= Height[Spawn];
-			while (Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false)
+			while (!BottomCollision(1, Spawn))
 				EnemyY[Spawn] += 1;
 		}
 		
-		while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true && Burrowing[Spawn] == false)
+		while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) && !Burrowing[Spawn])
 		{
 			EnemyX[Spawn] -= 1;
 		}
-		while (Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true && Burrowing[Spawn] == false)
+		while (Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) && !Burrowing[Spawn])
 		{
 			EnemyX[Spawn] += 1;
 		}
@@ -1546,9 +1665,9 @@ namespace Tmpl8
 		if (Xlocation >= 0 && Xlocation < 800 && Ylocation >= 0 && Ylocation < 512)
 		{ OnScreen = true; }
 		//enemy attacks
-		if (OnScreen == true)
+		if (OnScreen)
 		{
-			if (Enemies[Spawn] == 11) //the brittle skull will reel back, align Y value, and dash forward
+			if (Enemies[Spawn] == skully) //the brittle skull will reel back, align Y value, and dash forward
 			{
 				if (Attacking[Spawn] <= 0 && Xlocation < 500 && Xlocation > 300 && Ylocation < 290 && Ylocation > 230)
 				{
@@ -1602,7 +1721,7 @@ namespace Tmpl8
 
 
 
-			if (Enemies[Spawn] == 12) //the brittle cactus enemy will speed up, prepare, and jump at you
+			if (Enemies[Spawn] == cactus) //the brittle cactus enemy will speed up, prepare, and jump at you
 			{
 				if (Attacking[Spawn] <= 0 && Xlocation < 600 && Xlocation > 200 && Ylocation < 370 && Ylocation > 200)
 				{
@@ -1643,7 +1762,7 @@ namespace Tmpl8
 							EnemySpeed[Spawn] = 1;
 							EnemyAttackFrame[Spawn] = 7;
 						}
-						if (Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false)
+						if (!BottomCollision(1, Spawn))
 						{
 							Falling[Spawn] = true;
 							Attacking[Spawn] = 2 * TimeMultiplier;
@@ -1651,7 +1770,7 @@ namespace Tmpl8
 					}
 					if (Attacking[Spawn] <= 1 * TimeMultiplier)
 					{
-						if (Collision(EnemyX[Spawn] + Xoffset[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false && Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn] + 1, 0, 0) == false)
+						if (!BottomCollision(1, Spawn))
 						{
 							Falling[Spawn] = true;
 							Attacking[Spawn] = 2 * TimeMultiplier;
@@ -1665,11 +1784,11 @@ namespace Tmpl8
 				}
 			}
 
-			if (Enemies[Spawn] == 21) //the normal worm will burrow and, when nearby, attack the enemy
+			if (Enemies[Spawn] == worm) //the normal worm will burrow and, when nearby, attack the enemy
 			{
 				if (Ylocation < 208 && Attacking[Spawn] <= 0)
 				{
-					if (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + 13 + 18, 0, 0) == true)
+					if (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] / 2, EnemyY[Spawn] + 13 + 18, 0, 0))
 						ForcedDirection[Spawn] = 5, MoveFrame[Spawn] = false, EnemyAttackFrame[Spawn] = 10;
 				}
 
@@ -1694,7 +1813,7 @@ namespace Tmpl8
 				}
 			}
 
-			if (Enemies[Spawn] == 22) //the normal spitter will spit at you
+			if (Enemies[Spawn] == spitter) //the normal spitter will spit at you
 			{
 				if (Attacking[Spawn] <= 0 && Xlocation < 500 && Xlocation > 300 && Ylocation < 320 && Ylocation > 200)
 				{
@@ -1727,7 +1846,7 @@ namespace Tmpl8
 
 
 
-			if (Enemies[Spawn] == 31) //the tank scorpion will either sting you are run and claw at you
+			if (Enemies[Spawn] == scorpion) //the tank scorpion will either sting you are run and claw at you
 			{
 				std::random_device rd;
 				std::mt19937 attack(rd());
@@ -1825,7 +1944,7 @@ namespace Tmpl8
 				}
 			}
 
-			if (Enemies[Spawn] == 32) //the tank armadillo will ball up and rush at you
+			if (Enemies[Spawn] == armadillo) //the tank armadillo will ball up and rush at you
 			{
 				if (Attacking[Spawn] < 1 && Xlocation < 800 && Xlocation > 0 && Ylocation < 304 && Ylocation > 208)
 				{
@@ -1863,13 +1982,13 @@ namespace Tmpl8
 				if (Attacking[Spawn] == 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 800 * TimeMultiplier, EnemySpeed[Spawn] = 3, Falling[Spawn] = false, MoveFrame[Spawn] = true; }
 			}
 
-			//the brittle bat does not haave an attack
+			//the brittle bat does not have an attack
 
-			if (Enemies[Spawn] == 102) //the spider doesnt have an attack, but can climb any wall height at 4 times its usual speed
+			if (Enemies[Spawn] == spider) //the spider doesnt have an attack, but can climb any wall height at 4 times its usual speed
 			{
 				if (Ylocation > 239)
 				{
-					if (Collision(EnemyX[Spawn] + Xoffset[Spawn] - 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true || Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) == true)
+					if (Collision(EnemyX[Spawn] + Xoffset[Spawn] - 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) || Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn] + 1, EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0))
 					{
 						ForcedDirection[Spawn] = 5;
 						Climbing[Spawn] = true;
@@ -1887,7 +2006,7 @@ namespace Tmpl8
 				}
 			}
 
-			if (Enemies[Spawn] == 201) //the normal skull will reel back, and shoot a laser at you
+			if (Enemies[Spawn] == skull) //the normal skull will reel back, and shoot a laser at you
 			{
 				if (Attacking[Spawn] <= 0 && Xlocation < 500 && Xlocation > 300 && Ylocation < 320 && Ylocation > 200)
 				{
@@ -1917,7 +2036,7 @@ namespace Tmpl8
 				if (Attacking[Spawn] <= 0) { EnemyAttackFrame[Spawn] = 0, ForcedDirection[Spawn] = 0, AttackTimer[Spawn] = 600 * TimeMultiplier, EnemySpeed[Spawn] = 1, Falling[Spawn] = false, MoveFrame[Spawn] = true; }
 			}
 
-			if (Enemies[Spawn] == 202) //the normal raider will always shoot bullets
+			if (Enemies[Spawn] == raider) //the normal raider will always shoot bullets
 			{
 				if (Attacking[Spawn] <= 0)
 				{
@@ -1934,7 +2053,7 @@ namespace Tmpl8
 			}
 
 
-			if (Enemies[Spawn] == 301) //the tank boulder will always roll, but wont change direction until later
+			if (Enemies[Spawn] == boulder) //the tank boulder will always roll, but wont change direction until later
 			{
 				if (Xlocation < 400 && ForcedDirection[Spawn] != -1)
 				{
@@ -1969,7 +2088,7 @@ namespace Tmpl8
 				}
 			}
 
-			if (Enemies[Spawn] == 302) //the tank necromancer will summon the undead when onscreen
+			if (Enemies[Spawn] == necromancer) //the tank necromancer will summon the undead when onscreen
 			{
 				
 				if (Attacking[Spawn] <= 0)

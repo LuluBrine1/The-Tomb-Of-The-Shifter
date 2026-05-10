@@ -23,7 +23,31 @@ namespace Tmpl8
 
 		void Shoot(Surface* screen, float charx, float chary, int Projectile, float TimeMultiplier);
 
-		int weapon = 0;
+		enum WEAPON
+		{
+			Pistol = 1,
+			Sniper = 2,
+			Shotgun = 3,
+			Minigun = 4,
+			Twingun = 5,
+			PistolSniper = 12,
+			PistolShotgun = 13,
+			PistolMinigun = 14,
+			PistolTwinguns = 15,
+			SniperShotgun = 23,
+			SniperMinigun = 24,
+			SniperTwinguns = 25,
+			ShotgunSniper = 32,
+			ShotgunMinigun = 34,
+			ShotgunTwinguns = 35,
+			MinigunSniper = 42,
+			MinigunShotgun = 43,
+			MinigunTwinguns = 45,
+			TwingunSniper = 52,
+			TwingunShotgun = 53,
+			TwingunMinigun = 54
+		};
+		WEAPON weapon = Pistol;
 		//weapon is different from guntype, which started at 0 for regular guns and at 10 for evolved guns for sprite convenience.
 		//weapon starts at 1 for regular guns.
 		//the evolved guns will use the first gun number for the tens digit (which wouldnt be possible if weapon started at 0) and the evolve in the ones digit
