@@ -1055,7 +1055,7 @@ namespace Tmpl8
 				//regular movement
 				if (Left)
 				{
-					if (!RightCollision(EnemySpeed[Spawn], Spawn))
+					if (!RightCollision(static_cast<float>(EnemySpeed[Spawn]), Spawn))
 					{
 						EnemyX[Spawn] += EnemySpeed[Spawn] * TimeMultiplier;
 						EnemyMoveFrame[Spawn] += 1;
@@ -1069,7 +1069,7 @@ namespace Tmpl8
 				}
 				if (Right)
 				{
-					if (!LeftCollision(-EnemySpeed[Spawn], Spawn))
+					if (!LeftCollision(static_cast<float>(-EnemySpeed[Spawn]), Spawn))
 					{
 						EnemyX[Spawn] -= EnemySpeed[Spawn] * TimeMultiplier;
 						EnemyMoveFrame[Spawn] += 1;
@@ -1135,7 +1135,7 @@ namespace Tmpl8
 					Falling[Spawn] = true;
 					EnemyY[Spawn] -= EnemyGravity[Spawn] * TimeMultiplier;
 					(EnemyGravity[Spawn]) -= static_cast<float>(0.1 * TimeMultiplier);
-					while (BottomCollision(1 - (int)EnemyGravity[Spawn], Spawn))
+					while (BottomCollision(1 - EnemyGravity[Spawn], Spawn))
 					{
 						(EnemyGravity[Spawn]) += static_cast<float>(0.1 * TimeMultiplier);
 					}
@@ -1149,7 +1149,7 @@ namespace Tmpl8
 			}
 			if (Falling[Spawn])
 			{
-				while (TopCollision(1 - (int)EnemyGravity[Spawn], Spawn))
+				while (TopCollision(1 - EnemyGravity[Spawn], Spawn))
 				{
 					(EnemyGravity[Spawn]) -= static_cast<float>(0.1 * TimeMultiplier);
 				}
@@ -1159,7 +1159,7 @@ namespace Tmpl8
 			//some attacks force an enemy into one direction, 1 is to the right (+x) and -1 is to the left (-x). 5 is up and down
 			if (OnScreen && ForcedDirection[Spawn] == 1)
 			{
-				if (!RightCollision(EnemySpeed[Spawn], Spawn))
+				if (!RightCollision(static_cast<float>(EnemySpeed[Spawn]), Spawn))
 				{
 					EnemyX[Spawn] += EnemySpeed[Spawn] * TimeMultiplier;
 				}
@@ -1168,7 +1168,7 @@ namespace Tmpl8
 			}
 			if (OnScreen && ForcedDirection[Spawn] == -1)
 			{
-				if (!LeftCollision(-EnemySpeed[Spawn], Spawn))
+				if (!LeftCollision(static_cast<float>(-EnemySpeed[Spawn]), Spawn))
 				{
 					EnemyX[Spawn] -= EnemySpeed[Spawn] * TimeMultiplier;
 				}
