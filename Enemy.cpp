@@ -638,74 +638,35 @@ namespace Tmpl8
 
 			int WaveType = wave(type);
 
+			int RegularWave[14][3] = { { 4, 4, 2 }, { 10, 5, 2 }, { 8, 6, 4 }, { 14, 7, 4 }, { 12, 8, 6 }, { 18, 9, 6 }, { 16, 10, 8 }, { 22, 11, 8 }, { 20, 12, 10 }, { 26, 13, 10 }, { 24, 14, 12 }, { 30, 15, 12 }, { 28, 16, 14 }, { 34, 17, 14 } };
+			int HordeWave[14][3] = { { 14, 1, 1 }, { 20, 2, 1 }, { 22, 3, 2 }, { 28, 4, 2 }, { 30, 5, 3 }, { 36, 6, 3 }, { 38, 7, 4 }, { 44, 8, 4 }, { 46, 9, 5 }, { 52, 10, 5 }, { 58, 11, 6 }, { 60, 12, 6 }, { 62, 13, 7 }, { 68, 14, 7 } };
+			int NormalWave[14][3] = { { 2, 7, 1 }, { 4, 10, 1 }, { 6, 13, 1 }, { 4, 16, 2 }, { 6, 19, 2 }, { 8, 22, 2 }, { 6, 25, 3 }, { 8, 28, 3 }, { 10, 31, 3 }, { 8, 34, 4}, { 10, 37, 4 }, { 12, 40, 4 }, { 10, 43, 5 }, { 12, 46, 5 } };
+			int EliteWave[14][3] = { { 2, 1, 4 }, { 4, 2, 5 }, { 6, 3, 6 }, { 8, 4, 7 }, { 10, 5, 8 }, { 12, 6, 9 }, { 14, 7, 10 }, { 16, 8, 11 }, { 18, 9, 12 }, { 20, 10, 13}, { 22, 11, 14 }, { 24, 12, 15 }, { 26, 13, 16 }, { 28, 14, 17 } };
+
 
 			if (WaveType == 1) //regular generation
 			{
-				if (Space == 20) { Brittle = 4, Normal = 4, Tank = 2; }
-				else if (Space == 28) { Brittle = 10, Normal = 5, Tank = 2; }
-				else if (Space == 36) { Brittle = 8, Normal = 6, Tank = 4; }
-				else if (Space == 44) { Brittle = 14, Normal = 7, Tank = 4; }
-				else if (Space == 52) { Brittle = 12, Normal = 8, Tank = 6; }
-				else if (Space == 60) { Brittle = 18, Normal = 9, Tank = 6; }
-				else if (Space == 68) { Brittle = 16, Normal = 10, Tank = 8; }
-				else if (Space == 76) { Brittle = 22, Normal = 11, Tank = 8; }
-				else if (Space == 84) { Brittle = 20, Normal = 12, Tank = 10; }
-				else if (Space == 92) { Brittle = 26, Normal = 13, Tank = 10; }
-				else if (Space == 100) { Brittle = 24, Normal = 14, Tank = 12; }
-				else if (Space == 108) { Brittle = 30, Normal = 15, Tank = 12; }
-				else if (Space == 116) { Brittle = 28, Normal = 16, Tank = 14; }
-				else if (Space == 124) { Brittle = 34, Normal = 17, Tank = 14; }
+				Brittle = RegularWave[RoomsCleared][0];
+				Normal = RegularWave[RoomsCleared][1];
+				Tank = RegularWave[RoomsCleared][2];
 			}
 			else if (WaveType == 2) //horde generation
 			{
-				if (Space == 20) { Brittle = 14, Normal = 1, Tank = 1; }
-				else if (Space == 28) { Brittle = 20, Normal = 2, Tank = 1; }
-				else if (Space == 36) { Brittle = 22, Normal = 3, Tank = 2; }
-				else if (Space == 44) { Brittle = 28, Normal = 4, Tank = 2; }
-				else if (Space == 52) { Brittle = 30, Normal = 5, Tank = 3; }
-				else if (Space == 60) { Brittle = 36, Normal = 6, Tank = 3; }
-				else if (Space == 68) { Brittle = 38, Normal = 7, Tank = 4; }
-				else if (Space == 76) { Brittle = 44, Normal = 8, Tank = 4; }
-				else if (Space == 84) { Brittle = 46, Normal = 9, Tank = 5; }
-				else if (Space == 92) { Brittle = 52, Normal = 10, Tank = 5; }
-				else if (Space == 100) { Brittle = 58, Normal = 11, Tank = 6; }
-				else if (Space == 108) { Brittle = 60, Normal = 12, Tank = 6; }
-				else if (Space == 116) { Brittle = 62, Normal = 13, Tank = 7; }
-				else if (Space == 124) { Brittle = 68, Normal = 14, Tank = 7; }
+				Brittle = HordeWave[RoomsCleared][0];
+				Normal = HordeWave[RoomsCleared][1];
+				Tank = HordeWave[RoomsCleared][2];
 			}
 			else if (WaveType == 3) //normal generation
 			{
-				if (Space == 20) { Brittle = 2, Normal = 7, Tank = 1; }
-				else if (Space == 28) { Brittle = 4, Normal = 10, Tank = 1; }
-				else if (Space == 36) { Brittle = 6, Normal = 13, Tank = 1; }
-				else if (Space == 44) { Brittle = 4, Normal = 16, Tank = 2; }
-				else if (Space == 52) { Brittle = 6, Normal = 19, Tank = 2; }
-				else if (Space == 60) { Brittle = 8, Normal = 22, Tank = 2; }
-				else if (Space == 68) { Brittle = 6, Normal = 25, Tank = 3; }
-				else if (Space == 76) { Brittle = 8, Normal = 28, Tank = 3; }
-				else if (Space == 84) { Brittle = 10, Normal = 31, Tank = 3; }
-				else if (Space == 92) { Brittle = 8, Normal = 34, Tank = 4; }
-				else if (Space == 100) { Brittle = 10, Normal = 37, Tank = 4; }
-				else if (Space == 108) { Brittle = 12, Normal = 40, Tank = 4; }
-				else if (Space == 116) { Brittle = 10, Normal = 43, Tank = 5; }
-				else if (Space == 124) { Brittle = 12, Normal = 46, Tank = 5; }
+				Brittle = NormalWave[RoomsCleared][0];
+				Normal = NormalWave[RoomsCleared][1];
+				Tank = NormalWave[RoomsCleared][2];
 			}
 			else if (WaveType == 4) //elite generation
 			{
-				if (Space == 20) { Brittle = 2, Normal = 1, Tank = 4; }
-				else if (Space == 28) { Brittle = 4, Normal = 2, Tank = 5; }
-				else if (Space == 36) { Brittle = 6, Normal = 3, Tank = 6; }
-				else if (Space == 44) { Brittle = 8, Normal = 4, Tank = 7; }
-				else if (Space == 52) { Brittle = 10, Normal = 5, Tank = 8; }
-				else if (Space == 60) { Brittle = 12, Normal = 6, Tank = 9; }
-				else if (Space == 68) { Brittle = 14, Normal = 7, Tank = 10; }
-				else if (Space == 76) { Brittle = 16, Normal = 8, Tank = 11; }
-				else if (Space == 84) { Brittle = 18, Normal = 9, Tank = 12; }
-				else if (Space == 92) { Brittle = 20, Normal = 10, Tank = 13; }
-				else if (Space == 100) { Brittle = 22, Normal = 11, Tank = 14; }
-				else if (Space == 108) { Brittle = 24, Normal = 12, Tank = 15; }
-				else if (Space == 116) { Brittle = 26, Normal = 13, Tank = 16; }
-				else if (Space == 124) { Brittle = 28, Normal = 14, Tank = 17; }
+				Brittle = EliteWave[RoomsCleared][0];
+				Normal = EliteWave[RoomsCleared][1];
+				Tank = EliteWave[RoomsCleared][2];
 			}
 			if (WaveType == 5) //random generation
 			{
@@ -1396,247 +1357,83 @@ namespace Tmpl8
 	{
 		if (Enemies[Spawn] == cactus)
 		{
-			if (EnemyFrame[Spawn] == 0 || EnemyFrame[Spawn] == 1 || EnemyFrame[Spawn] == 4 || EnemyFrame[Spawn] == 5)
-			{
-				Width[Spawn] = 13, Height[Spawn] = 20, Xoffset[Spawn] = 9, Yoffset[Spawn] = 0;
-			}
-
-			else if (EnemyFrame[Spawn] == 2)
-			{
-				Width[Spawn] = 19, Height[Spawn] = 19, Xoffset[Spawn] = 4, Yoffset[Spawn] = 0;
-			}
-
-			else if (EnemyFrame[Spawn] == 3)
-			{
-				Width[Spawn] = 21, Height[Spawn] = 13, Xoffset[Spawn] = 0, Yoffset[Spawn] = 0;
-			}
-
-			else if ( EnemyFrame[Spawn] == 6) 
-			{ Width[Spawn] = 19, Height[Spawn] = 19, Xoffset[Spawn] = 8, Yoffset[Spawn] = 0; }
-
-			else if (EnemyFrame[Spawn] == 7) 
-			{ Width[Spawn] = 21, Height[Spawn] = 13, Xoffset[Spawn] = 10, Yoffset[Spawn] = 0; }
-
+			int Hitbox[8][4] = { {13, 20, 9, 0}, {13, 20, 9, 0}, {19, 19, 4, 0}, {21, 13, 0, 0}, {13, 20, 9, 0}, {13, 20, 9, 0}, {19, 19, 8, 0}, {21, 13, 10, 0} };
+			Width[Spawn] = Hitbox[EnemyFrame[Spawn]][0];
+			Height[Spawn] = Hitbox[EnemyFrame[Spawn]][1];
+			Xoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][2];
+			Yoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][3];
 		}
 		if (Enemies[Spawn] == worm)
 		{
-			if (EnemyFrame[Spawn] == 0 || EnemyFrame[Spawn] == 9 || EnemyFrame[Spawn] == 11 || EnemyFrame[Spawn] == 20) 
-			{ Width[Spawn] = 63, Height[Spawn] = 20, Xoffset[Spawn] = 0, Yoffset[Spawn] = 0; }
-
-			else if (EnemyFrame[Spawn] == 1) 
-			{ Width[Spawn] = 60, Height[Spawn] = 19, Xoffset[Spawn] = 3, Yoffset[Spawn] = 1; }
-
-			else if (EnemyFrame[Spawn] == 2 || EnemyFrame[Spawn] == 14 || EnemyFrame[Spawn] == 15) 
-			{ Width[Spawn] = 62, Height[Spawn] = 19, Xoffset[Spawn] = 1, Yoffset[Spawn] = 1; }
-
-			else if (EnemyFrame[Spawn] == 3 || EnemyFrame[Spawn] == 4 || EnemyFrame[Spawn] == 13) 
-			{ Width[Spawn] = 62, Height[Spawn] = 19, Xoffset[Spawn] = 0, Yoffset[Spawn] = 1; }
-			
-			else if (EnemyFrame[Spawn] == 5 || EnemyFrame[Spawn] == 6 || EnemyFrame[Spawn] == 7 || EnemyFrame[Spawn] == 8) 
-			{ Width[Spawn] = 44, Height[Spawn] = 19, Xoffset[Spawn] = 0, Yoffset[Spawn] = 1; }
-
-			else if (EnemyFrame[Spawn] == 10) 
-			{ Width[Spawn] = 7, Height[Spawn] = 13, Xoffset[Spawn] = 28, Yoffset[Spawn] = 18; }
-			
-			else if (EnemyFrame[Spawn] == 12) 
-			{ Width[Spawn] = 60, Height[Spawn] = 19, Xoffset[Spawn] = 0, Yoffset[Spawn] = 1; }
-			
-			else if (EnemyFrame[Spawn] == 16 || EnemyFrame[Spawn] == 17 || EnemyFrame[Spawn] == 18 || EnemyFrame[Spawn] == 19) 
-			{ Width[Spawn] = 44, Height[Spawn] = 19, Xoffset[Spawn] = 19, Yoffset[Spawn] = 1; }
-
+			int Hitbox[21][4] = { {63, 20, 0, 0}, {60, 19, 3, 1}, {62, 19, 1, 1}, {62, 19, 0, 1}, {62, 19, 0, 1}, {44, 19, 0, 1}, {44, 19, 0, 1}, {44, 19, 0, 1}, {44, 19, 0, 1}, {63, 20, 0, 0}, 
+								  {7, 13, 28, 18}, {63, 20, 0, 0}, {60, 19, 0, 1}, {62, 19, 0, 1}, {62, 19, 1, 1}, {62, 19, 1, 1}, {44, 19, 19, 1}, {44, 19, 19, 1}, {44, 19, 19, 1}, {44, 19, 19, 1}, 
+								  {63, 20, 0, 0} };
+			Width[Spawn] = Hitbox[EnemyFrame[Spawn]][0];
+			Height[Spawn] = Hitbox[EnemyFrame[Spawn]][1];
+			Xoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][2];
+			Yoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][3];
 		}
 		if (Enemies[Spawn] == spitter)
 		{
-			if (EnemyFrame[Spawn] == 0 || EnemyFrame[Spawn] == 8)
-			{
-				Width[Spawn] = 13, Height[Spawn] = 10, Xoffset[Spawn] = 8, Yoffset[Spawn] = 0;
-			}
-
-			else if (EnemyFrame[Spawn] == 1 || EnemyFrame[Spawn] == 2 || EnemyFrame[Spawn] == 3)
-			{
-				Width[Spawn] = 10, Height[Spawn] = 10, Xoffset[Spawn] = 8, Yoffset[Spawn] = 0;
-			}
-
-			else if (EnemyFrame[Spawn] == 4 || EnemyFrame[Spawn] == 5 || EnemyFrame[Spawn] == 6 || EnemyFrame[Spawn] == 7 || EnemyFrame[Spawn] == 13 || EnemyFrame[Spawn] == 14 || EnemyFrame[Spawn] == 15 || EnemyFrame[Spawn] == 16)
-			{
-				Width[Spawn] = 12, Height[Spawn] = 10, Xoffset[Spawn] = 9, Yoffset[Spawn] = 0;
-			}
-
-			if (EnemyFrame[Spawn] == 9 || EnemyFrame[Spawn] == 17)
-			{
-				Width[Spawn] = 13, Height[Spawn] = 10, Xoffset[Spawn] = 9, Yoffset[Spawn] = 0;
-			}
-
-			else if (EnemyFrame[Spawn] == 10 || EnemyFrame[Spawn] == 11 || EnemyFrame[Spawn] == 12)
-			{
-				Width[Spawn] = 10, Height[Spawn] = 10, Xoffset[Spawn] = 12, Yoffset[Spawn] = 0;
-			}
-
+			int Hitbox[18][4] = { {13, 10, 8, 0}, {10, 10, 8, 0}, {10, 10, 8, 0}, {10, 10, 8, 0}, {12, 10, 9, 0}, {12, 10, 9, 0}, {12, 10, 9, 0}, {12, 10, 9, 0}, {13, 10, 8, 0}, {13, 10, 9, 0}, 
+				                  {10, 10, 12, 0}, {10, 10, 12, 0}, {10, 10, 12, 0}, {12, 10, 9, 0}, {12, 10, 9, 0}, {12, 10, 9, 0}, {12, 10, 9, 0}, {13, 10, 9, 0} };
+			Width[Spawn] = Hitbox[EnemyFrame[Spawn]][0];
+			Height[Spawn] = Hitbox[EnemyFrame[Spawn]][1];
+			Xoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][2];
+			Yoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][3];
 		}
 		if (Enemies[Spawn] == scorpion)
 		{
-			if (EnemyFrame[Spawn] == 0 || EnemyFrame[Spawn] == 2 || EnemyFrame[Spawn] == 10 || EnemyFrame[Spawn] == 11 || EnemyFrame[Spawn] == 14 || EnemyFrame[Spawn] == 15 || EnemyFrame[Spawn] == 16 || EnemyFrame[Spawn] == 18 || EnemyFrame[Spawn] == 19 
-				|| EnemyFrame[Spawn] == 20 || EnemyFrame[Spawn] == 22 || EnemyFrame[Spawn] == 30 || EnemyFrame[Spawn] == 31 || EnemyFrame[Spawn] == 34 || EnemyFrame[Spawn] == 35 || EnemyFrame[Spawn] == 36 || EnemyFrame[Spawn] == 38 || EnemyFrame[Spawn] == 39)
-			{ Width[Spawn] = 37, Height[Spawn] = 31, Xoffset[Spawn] = 13, Yoffset[Spawn] = 0; }
-
-			else if (EnemyFrame[Spawn] == 1)
-			{ Width[Spawn] = 36, Height[Spawn] = 31, Xoffset[Spawn] = 13, Yoffset[Spawn] = 0; }
-
-			else if (EnemyFrame[Spawn] == 3 || EnemyFrame[Spawn] == 9)
-			{ Width[Spawn] = 36, Height[Spawn] = 30, Xoffset[Spawn] = 13, Yoffset[Spawn] = 1; }
-
-			else if (EnemyFrame[Spawn] == 4)
-			{ Width[Spawn] = 35, Height[Spawn] = 30, Xoffset[Spawn] = 13, Yoffset[Spawn] = 1; }
-
-			else if (EnemyFrame[Spawn] == 5 || EnemyFrame[Spawn] == 8) 
-			{ Width[Spawn] = 35, Height[Spawn] = 28, Xoffset[Spawn] = 13, Yoffset[Spawn] = 3; }
-
-			else if (EnemyFrame[Spawn] == 6) 
-			{ Width[Spawn] = 37, Height[Spawn] = 27, Xoffset[Spawn] = 10, Yoffset[Spawn] = 4; }
-
-			else if (EnemyFrame[Spawn] == 7) 
-			{ Width[Spawn] = 38, Height[Spawn] = 27, Xoffset[Spawn] = 9, Yoffset[Spawn] = 4; }
-
-			else if (EnemyFrame[Spawn] == 12 || EnemyFrame[Spawn] == 13 || EnemyFrame[Spawn] == 17) 
-			{ Width[Spawn] = 39, Height[Spawn] = 31, Xoffset[Spawn] = 11, Yoffset[Spawn] = 0; }
-
-			else if (EnemyFrame[Spawn] == 21) 
-			{ Width[Spawn] = 36, Height[Spawn] = 31, Xoffset[Spawn] = 14, Yoffset[Spawn] = 0; }
-			
-			else if (EnemyFrame[Spawn] == 23 || EnemyFrame[Spawn] == 29)
-			{ Width[Spawn] = 36, Height[Spawn] = 30, Xoffset[Spawn] = 14, Yoffset[Spawn] = 1; }
-
-			else if (EnemyFrame[Spawn] == 24)
-			{ Width[Spawn] = 35, Height[Spawn] = 30, Xoffset[Spawn] = 15, Yoffset[Spawn] = 1; }
-
-			else if (EnemyFrame[Spawn] == 25 || EnemyFrame[Spawn] == 28)
-			{ Width[Spawn] = 35, Height[Spawn] = 28, Xoffset[Spawn] = 15, Yoffset[Spawn] = 3; }
-
-			else if (EnemyFrame[Spawn] == 26)
-			{ Width[Spawn] = 37, Height[Spawn] = 27, Xoffset[Spawn] = 16, Yoffset[Spawn] = 4; }
-
-			else if (EnemyFrame[Spawn] == 27)
-			{ Width[Spawn] = 38, Height[Spawn] = 27, Xoffset[Spawn] = 16, Yoffset[Spawn] = 4; }
-
-			else if (EnemyFrame[Spawn] == 32 || EnemyFrame[Spawn] == 33 || EnemyFrame[Spawn] == 37)
-			{ Width[Spawn] = 39, Height[Spawn] = 31, Xoffset[Spawn] = 11, Yoffset[Spawn] = 0; }
-
-
+			int Hitbox[40][4] = { {37, 31, 13, 0}, {36, 31, 13, 0}, {37, 31, 13, 0}, {36, 30, 13, 1}, {35, 30, 13, 1}, {35, 28, 13, 3}, {37, 27, 10, 4}, {38, 27, 9, 4}, {35, 28, 13, 3}, {36, 30, 13, 1}, 
+								  {37, 31, 13, 0}, {37, 31, 13, 0}, {39, 31, 11, 0}, {39, 31, 11, 0}, {37, 31, 13, 0}, {37, 31, 13, 0}, {37, 31, 13, 0}, {39, 31, 11, 0}, {37, 31, 13, 0}, {37, 31, 13, 0}, 
+				                  {37, 31, 13, 0}, {36, 31, 14, 0}, {37, 31, 13, 0}, {36, 30, 14, 1}, {35, 30, 15, 1}, {35, 28, 15, 3}, {37, 27, 16, 4}, {38, 27, 16, 4}, {35, 28, 15, 3}, {36, 30, 14, 1}, 
+				                  {37, 31, 13, 0}, {37, 31, 13, 0}, {39, 31, 11, 0}, {39, 31, 11, 0}, {37, 31, 13, 0}, {37, 31, 13, 0}, {37, 31, 13, 0}, {39, 31, 11, 0}, {37, 31, 13, 0}, {37, 31, 13, 0} };
+			Width[Spawn] = Hitbox[EnemyFrame[Spawn]][0];
+			Height[Spawn] = Hitbox[EnemyFrame[Spawn]][1];
+			Xoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][2];
+			Yoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][3];
 		}
-		if (Enemies[Spawn] == armadillo)
+		if (Enemies[Spawn] == armadillo) //-1 Yoffset to make it easier to hit
 		{
-			if (EnemyFrame[Spawn] == 0 || EnemyFrame[Spawn] == 1 || EnemyFrame[Spawn] == 13 || EnemyFrame[Spawn] == 14)
-			{ Width[Spawn] = 31, Height[Spawn] = 17, Xoffset[Spawn] = 0, Yoffset[Spawn] = -1; }
-
-			else if (EnemyFrame[Spawn] == 2 || EnemyFrame[Spawn] == 15)
-			{ Width[Spawn] = 31, Height[Spawn] = 15, Xoffset[Spawn] = 0, Yoffset[Spawn] = 0; }
-
-			else if (EnemyFrame[Spawn] == 3 || EnemyFrame[Spawn] == 16)
-			{ Width[Spawn] = 29, Height[Spawn] = 14, Xoffset[Spawn] = 1, Yoffset[Spawn] = 0; }
-
-			else if (EnemyFrame[Spawn] == 4 || EnemyFrame[Spawn] == 17)
-			{ Width[Spawn] = 27, Height[Spawn] = 14, Xoffset[Spawn] = 2, Yoffset[Spawn] = 0; }
-
-			else if (EnemyFrame[Spawn] == 5 || EnemyFrame[Spawn] == 18)
-			{ Width[Spawn] = 25, Height[Spawn] = 15, Xoffset[Spawn] = 3, Yoffset[Spawn] = 0; }
-
-			else if (EnemyFrame[Spawn] == 6 || EnemyFrame[Spawn] == 19)
-			{ Width[Spawn] = 23, Height[Spawn] = 16, Xoffset[Spawn] = 4, Yoffset[Spawn] = 0; }
-
-			else if (EnemyFrame[Spawn] == 7) 
-			{ Width[Spawn] = 22, Height[Spawn] = 17, Xoffset[Spawn] = 5, Yoffset[Spawn] = 0; }
-
-			else if (EnemyFrame[Spawn] == 8) 
-			{ Width[Spawn] = 21, Height[Spawn] = 17, Xoffset[Spawn] = 6, Yoffset[Spawn] = 0; }
-
-			else if (EnemyFrame[Spawn] == 9 || EnemyFrame[Spawn] == 10 || EnemyFrame[Spawn] == 11 || EnemyFrame[Spawn] == 12)
-			{ Width[Spawn] = 20, Height[Spawn] = 18, Xoffset[Spawn] = 7, Yoffset[Spawn] = 0; }
-
-			else if (EnemyFrame[Spawn] == 20) 
-			{ Width[Spawn] = 22, Height[Spawn] = 17, Xoffset[Spawn] = 4, Yoffset[Spawn] = 0; }
-
-			else if (EnemyFrame[Spawn] == 21) 
-			{ Width[Spawn] = 21, Height[Spawn] = 17, Xoffset[Spawn] = 4, Yoffset[Spawn] = 0; }
-
-			else if (EnemyFrame[Spawn] == 22 || EnemyFrame[Spawn] == 23 || EnemyFrame[Spawn] == 24 || EnemyFrame[Spawn] == 25)
-			{ Width[Spawn] = 20, Height[Spawn] = 18, Xoffset[Spawn] = 4, Yoffset[Spawn] = 0; }
+			int Hitbox[26][4] = { {31, 17, 0, -1}, {31, 17, 0, -1}, {31, 15, 0, 0}, {29, 14, 1, 0}, {27, 14, 2, 0}, {25, 15, 3, 0}, {23, 16, 4, 0}, {22, 17, 5, 0}, {21, 17, 6, 0}, {20, 18, 7, 0},
+								  {20, 18, 7, 0}, {20, 18, 7, 0}, {20, 18, 7, 0}, {31, 17, 0, -1}, {31, 17, 0, -1}, {31, 15, 0, 0}, {29, 14, 1, 0}, {27, 14, 2, 0}, {25, 15, 3, 0}, {23, 16, 4, 0}, 
+								  {22, 17, 4, 0}, {21, 17, 4, 0}, {20, 18, 4, 0}, {20, 18, 4, 0}, {20, 18, 4, 0}, {20, 18, 4, 0} };
+			Width[Spawn] = Hitbox[EnemyFrame[Spawn]][0];
+			Height[Spawn] = Hitbox[EnemyFrame[Spawn]][1];
+			Xoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][2];
+			Yoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][3];
 		}
 		if (Enemies[Spawn] == skull)
 		{
-			if (EnemyFrame[Spawn] == 0 || EnemyFrame[Spawn] == 5)
-			{
-				Height[Spawn] = 29;
-			}
-
-			else if (EnemyFrame[Spawn] == 1 || EnemyFrame[Spawn] == 6)
-			{
-				Height[Spawn] = 30;
-			}
-
-			else if (EnemyFrame[Spawn] == 2 || EnemyFrame[Spawn] == 7)
-			{
-				Height[Spawn] = 31;
-			}
-
-			else if (EnemyFrame[Spawn] == 3 || EnemyFrame[Spawn] == 8)
-			{
-				Height[Spawn] = 32;
-			}
-
-			else if (EnemyFrame[Spawn] == 4 || EnemyFrame[Spawn] == 9)
-			{
-				Height[Spawn] = 33;
-			}
+			int Hitbox[10][4] = { {0, 29, 0, 0}, {0, 30, 0, 0}, {0, 31, 0, 0}, {0, 32, 0, 0}, {0, 33, 0, 0}, {0, 29, 0, 0}, {0, 30, 0, 0}, {0, 31, 0, 0}, {0, 32, 0, 0}, {0, 33, 0, 0} };
+			Height[Spawn] = Hitbox[EnemyFrame[Spawn]][1];
 		}
 		if (Enemies[Spawn] == necromancer)
 		{
-			if (EnemyFrame[Spawn] == 0 || EnemyFrame[Spawn] == 6)
-			{
-				Width[Spawn] = 15, Height[Spawn] = 31, Xoffset[Spawn] = 8, Yoffset[Spawn] = 0;
-			}
-
-			else if (EnemyFrame[Spawn] == 1 || EnemyFrame[Spawn] == 2 || EnemyFrame[Spawn] == 4 || EnemyFrame[Spawn] == 5)
-			{
-				Width[Spawn] = 20, Height[Spawn] = 31, Xoffset[Spawn] = 3, Yoffset[Spawn] = 0;
-			}
-
-			else if (EnemyFrame[Spawn] == 3)
-			{
-				Width[Spawn] = 21, Height[Spawn] = 31, Xoffset[Spawn] = 2, Yoffset[Spawn] = 0;
-			}
-
-			else if (EnemyFrame[Spawn] == 7 || EnemyFrame[Spawn] == 8 || EnemyFrame[Spawn] == 10 || EnemyFrame[Spawn] == 11)
-			{
-				Width[Spawn] = 20, Height[Spawn] = 31, Xoffset[Spawn] = 8, Yoffset[Spawn] = 0;
-			}
-
-			else if (EnemyFrame[Spawn] == 9)
-			{
-				Width[Spawn] = 21, Height[Spawn] = 31, Xoffset[Spawn] = 8, Yoffset[Spawn] = 0;
-			}
+			int Hitbox[12][4] = { {15, 31, 8, 0}, {20, 31, 3, 0}, {20, 31, 3, 0}, {21, 31, 2, 0}, {20, 31, 3, 0}, {20, 31, 3, 0}, {15, 31, 8, 0}, {20, 31, 8, 0}, {20, 31, 8, 0}, {21, 31, 8, 0}, 
+								  {20, 31, 8, 0}, {20, 31, 8, 0} };
+			Width[Spawn] = Hitbox[EnemyFrame[Spawn]][0];
+			Height[Spawn] = Hitbox[EnemyFrame[Spawn]][1];
+			Xoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][2];
+			Yoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][3];
 		}
 		if (Enemies[Spawn] == undead)
 		{
-			if (EnemyFrame[Spawn] == 0 || EnemyFrame[Spawn] == 1 || EnemyFrame[Spawn] == 2)
-			{
-				Width[Spawn] = 13, Height[Spawn] = 31, Xoffset[Spawn] = 6, Yoffset[Spawn] = 0;
-			}
-			else if (EnemyFrame[Spawn] == 3 || EnemyFrame[Spawn] == 4 || EnemyFrame[Spawn] == 5)
-			{
-				Width[Spawn] = 13, Height[Spawn] = 31, Xoffset[Spawn] = 12, Yoffset[Spawn] = 0;
-			}
+			int Hitbox[6][4] = { {13, 31, 6, 0}, {13, 31, 6, 0}, {13, 31, 6, 0}, {13, 31, 12, 0}, {13, 31, 12, 0}, {13, 31, 12, 0} };
+			Width[Spawn] = Hitbox[EnemyFrame[Spawn]][0];
+			Height[Spawn] = Hitbox[EnemyFrame[Spawn]][1];
+			Xoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][2];
+			Yoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][3];
 		}
 
 		if (Enemies[Spawn] == shifter)
 		{
-			if (EnemyFrame[Spawn] < 10)
-			{
-				Width[Spawn] = 53, Height[Spawn] = 127, Xoffset[Spawn] = 0, Yoffset[Spawn] = 0;
-			}
-			else if (EnemyFrame[Spawn] == 10 || EnemyFrame[Spawn] == 11 || EnemyFrame[Spawn] == 12)
-			{
-				Width[Spawn] = 29, Height[Spawn] = 29, Xoffset[Spawn] = 12, Yoffset[Spawn] = 0;
-			}
+			int Hitbox[13][4] = { {53, 127, 0, 0}, {53, 127, 0, 0}, {53, 127, 0, 0}, {53, 127, 0, 0}, {53, 127, 0, 0}, {53, 127, 0, 0}, {53, 127, 0, 0}, {53, 127, 0, 0}, {53, 127, 0, 0}, {53, 127, 0, 0}, 
+										 {29, 29, 12, 0}, {29, 29, 12, 0}, {29, 29, 12, 0} };
+			Width[Spawn] = Hitbox[EnemyFrame[Spawn]][0];
+			Height[Spawn] = Hitbox[EnemyFrame[Spawn]][1];
+			Xoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][2];
+			Yoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][3];
 		}
 
 		//if the enemy hitbox change puts them in a wall, it lets them out
