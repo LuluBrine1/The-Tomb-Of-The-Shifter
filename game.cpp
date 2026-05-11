@@ -577,6 +577,10 @@ namespace Tmpl8
 			{
 				charx -= (MoveSpeed * TimeMultiplier);
 			}
+
+			while (Collision(left - MoveSpeed, topy, charx, chary) && Collision(leftx - MoveSpeed, bottomy, charx, chary))
+				charx += (MoveSpeed * TimeMultiplier);
+
 			moving += 0.1;
 		}
 
@@ -586,6 +590,10 @@ namespace Tmpl8
 			{
 				charx += (MoveSpeed * TimeMultiplier);
 			}
+
+			while (Collision(rightx + MoveSpeed, topy, charx, chary) && Collision(rightx + MoveSpeed, bottomy, charx, chary))
+				charx -= (MoveSpeed * TimeMultiplier);
+
 			moving += 0.1;
 		}
 

@@ -1435,15 +1435,19 @@ namespace Tmpl8
 			Xoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][2];
 			Yoffset[Spawn] = Hitbox[EnemyFrame[Spawn]][3];
 		}
-
+		
 		//if the enemy hitbox change puts them in a wall, it lets them out
 		if (BottomCollision(0, Spawn) && !Burrowing[Spawn])
 		{
-			EnemyY[Spawn] -= Height[Spawn];
-			while (!BottomCollision(1, Spawn))
-				EnemyY[Spawn] += 1;
+			for (int i = 0; i < Height[Spawn]; i++)
+			{
+				if (BottomCollision(0, Spawn) && !Burrowing[Spawn])
+				{
+					EnemyY[Spawn] -= 1;
+				}
+			}
 		}
-		
+
 		while (Collision(EnemyX[Spawn] + Xoffset[Spawn] + Width[Spawn], EnemyY[Spawn] + Yoffset[Spawn] + Height[Spawn], 0, 0) && !Burrowing[Spawn])
 		{
 			EnemyX[Spawn] -= 1;
@@ -1452,6 +1456,7 @@ namespace Tmpl8
 		{
 			EnemyX[Spawn] += 1;
 		}
+
 	}
 
 	void EnemyAttack(float charx, float chary, int Spawn, float TimeMultiplier)
@@ -1559,7 +1564,7 @@ namespace Tmpl8
 							EnemySpeed[Spawn] = 1;
 							EnemyAttackFrame[Spawn] = 7;
 						}
-						if (!BottomCollision(1, Spawn))
+						if (!BottomCollision(2, Spawn))
 						{
 							Falling[Spawn] = true;
 							Attacking[Spawn] = 2 * TimeMultiplier;
@@ -1567,11 +1572,13 @@ namespace Tmpl8
 					}
 					if (Attacking[Spawn] <= 1 * TimeMultiplier)
 					{
-						if (!BottomCollision(1, Spawn))
+						if (!BottomCollision(2, Spawn))
 						{
 							Falling[Spawn] = true;
 							Attacking[Spawn] = 2 * TimeMultiplier;
 						}
+						else
+							Attacking[Spawn] = 0;
 					}
 					
 
